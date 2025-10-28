@@ -1,0 +1,203 @@
+.auth-body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+}
+
+.auth-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+.auth-card h1 {
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+}
+
+.auth-subtitle {
+    color: #7f8c8d;
+    margin-bottom: 2rem;
+}
+
+.auth-form {
+    text-align: left;
+}
+
+.auth-footer {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #ecf0f1;
+}
+
+.auth-footer a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+/* Admin registration styles */
+.form-options {
+    margin: 15px 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.checkbox-label input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #ddd;
+    border-radius: 3px;
+    margin-right: 8px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark {
+    background: #3498db;
+    border-color: #3498db;
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 12px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.form-hint {
+    color: #666;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    display: block;
+}
+
+.demo-credentials {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+}
+
+.demo-credentials h3 {
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+    color: #2c3e50;
+}
+
+.demo-credentials p {
+    margin: 5px 0;
+    font-size: 0.8rem;
+    color: #555;
+}
+/* Account Type Selection Styles */
+.account-type-selector {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.account-type-option {
+    flex: 1;
+    cursor: pointer;
+}
+
+.account-type-option input[type="radio"] {
+    display: none;
+}
+
+.account-type-card {
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.account-type-option input[type="radio"]:checked + .account-type-card {
+    border-color: #3498db;
+    background: #f8f9fa;
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+}
+
+.account-type-card:hover {
+    border-color: #3498db;
+    transform: translateY(-2px);
+}
+
+.account-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.account-info h4 {
+    margin: 0 0 8px 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.account-info p {
+    margin: 0;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Responsive design for account type selector */
+@media (max-width: 768px) {
+    .account-type-selector {
+        flex-direction: column;
+    }
+    
+    .account-type-card {
+        padding: 15px;
+    }
+}
+
+/* Enhanced demo credentials */
+.demo-credentials {
+    margin-top: 25px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #3498db;
+}
+
+.demo-credentials h3 {
+    margin: 0 0 12px 0;
+    font-size: 1rem;
+    color: #2c3e50;
+}
+
+.demo-credentials p {
+    margin: 6px 0;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}

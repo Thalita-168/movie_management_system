@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - MyMovies</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/auth.css">
+</head>
+<body class="auth-body">
+    <div class="auth-container">
+        <div class="auth-card">
+            <h1>Create Account</h1>
+            <p class="auth-subtitle">Join MyMovies - Choose your account type</p>
+            
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" name="fullName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required minlength="6">
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+
+                <!-- SIMPLIFIED: Account Type Selection -->
+                <div class="form-group">
+                    <label>Account Type</label>
+                    <div class="account-type-selector">
+                        <label class="account-type-option">
+                            <input type="radio" name="accountType" value="user" checked>
+                            <div class="account-type-card">
+                                <div class="account-icon">👤</div>
+                                <div class="account-info">
+                                    <h4>Regular User</h4>
+                                    <p>Browse movies and book seats</p>
+                                </div>
+                            </div>
+                        </label>
+                        
+                        <label class="account-type-option">
+                            <input type="radio" name="accountType" value="admin">
+                            <div class="account-type-card">
+                                <div class="account-icon">👑</div>
+                                <div class="account-info">
+                                    <h4>Administrator</h4>
+                                    <p>Manage movies and users</p>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Already have an account? <a href="login.html">Sign in</a></p>
+            </div>
+
+            <!-- Demo Credentials -->
+            <div class="demo-credentials">
+                <h3>Quick Login:</h3>
+                <p><strong>Admin:</strong> admin / admin123</p>
+                <p><strong>User:</strong> user1 / user123</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    
+    <script>
+        // SIMPLIFIED: Form submission
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                fullName: document.getElementById('fullName').value.trim(),
+                username: document.getElementById('username').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                password: document.getElementById('password').value,
+                confirmPassword: document.getElementById('confirmPassword').value
+            };
+
+            // Validate passwords match
+            if (formData.password !== formData.confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
+
+            // Get account type
+            const accountType = document.querySelector('input[name="accountType"]:checked').value;
+
+            // Create user object
+            const userData = {
+                name: formData.fullName,
+                username: formData.username,
+                email: formData.email,
+                phone: formData.phone,
+                password: formData.password,
+                role: accountType // Directly use the selected account type
+            };
+
+            try {
+                // Register user
+                registerUser(userData);
+                
+                // Auto-login after registration
+                const user = authenticateUser(userData.username, userData.password);
+                if (user) {
+                    // Remove password before saving to currentUser
+                    const { password, ...userWithoutPassword } = user;
+                    localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
+                    
+                    alert(`🎉 Account created successfully! Welcome, ${userData.name}`);
+                    window.location.href = accountType === 'admin' ? 'admin.html' : 'index.html';
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+
+        // Create demo accounts on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            createDemoAccounts();
+        });
+
+        function createDemoAccounts() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            // Demo admin account
+            const adminExists = users.find(user => user.username === 'admin');
+            if (!adminExists) {
+                users.push({
+                    id: 'admin-001',
+                    name: 'System Administrator',
+                    username: 'admin',
+                    email: 'admin@mymovies.com',
+                    password: 'admin123',
+                    phone: '(555) 000-0001',
+                    role: 'admin',
+                    createdAt: new Date().toISOString()
+                });
+            }
+
+            // Demo user account
+            const userExists = users.find(user => user.username === 'user1');
+            if (!userExists) {
+                users.push({
+                    id: 'user-001',
+                    name: 'Demo User',
+                    username: 'user1',
+                    email: 'user@mymovies.com',
+                    password: 'user123',
+                    phone: '(555) 000-0002',
+                    role: 'user',
+                    createdAt: new Date().toISOString()
+                });
+            }
+
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        // Add these registration functions if they don't exist in storage.js
+        function registerUser(userData) {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            
+            // Check if username already exists
+            if (users.find(user => user.username === userData.username)) {
+                throw new Error('Username already exists! Please choose a different username.');
+            }
+            
+            // Check if email already exists
+            if (users.find(user => user.email === userData.email)) {
+                throw new Error('Email already registered! Please use a different email.');
+            }
+            
+            const user = {
+                id: 'user-' + Date.now(),
+                name: userData.name,
+                username: userData.username,
+                email: userData.email,
+                phone: userData.phone,
+                password: userData.password,
+                role: userData.role || 'user',
+                createdAt: new Date().toISOString()
+            };
+            
+            users.push(user);
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            console.log('✅ User registered:', user);
+            return user;
+        }
+
+        function authenticateUser(username, password) {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.username === username && u.password === password);
+            return user || null;
+        }
+    </script>
+    
+</body>
+</html>

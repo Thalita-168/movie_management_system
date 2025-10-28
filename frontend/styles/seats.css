@@ -1,0 +1,123 @@
+/* Booking Options Styles */
+.booking-options {
+    margin-top: 20px;
+}
+
+.option-group {
+    margin-bottom: 15px;
+}
+
+.option-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-select {
+    width: 100%;
+    max-width: 300px;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    background: white;
+    transition: border-color 0.3s ease;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+/* Seat layout improvements */
+.seat-layout-container {
+    margin-top: 30px;
+}
+
+.seat-map {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 8px;
+    margin: 20px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 10px;
+}
+
+.seat {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.seat.available {
+    background: #27ae60;
+    color: white;
+}
+
+.seat.available:hover {
+    background: #219a52;
+    transform: scale(1.1);
+}
+
+.seat.selected {
+    background: #3498db;
+    color: white;
+    border-color: #2980b9;
+}
+
+.seat.occupied {
+    background: #e74c3c;
+    color: white;
+    cursor: not-allowed;
+}
+
+/* Booking Summary improvements */
+.booking-summary {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 4px solid #3498db;
+}
+
+.summary-details p {
+    margin: 8px 0;
+    padding: 5px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.summary-details strong {
+    color: #2c3e50;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .booking-options {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-select {
+        max-width: 100%;
+    }
+    
+    .seat-map {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 5px;
+        padding: 10px;
+    }
+    
+    .seat {
+        width: 30px;
+        height: 30px;
+        font-size: 10px;
+    }
+}

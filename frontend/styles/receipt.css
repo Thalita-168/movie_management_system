@@ -1,0 +1,255 @@
+/* Receipt Styles */
+.receipt-section {
+    display: none;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 30px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    background: white;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+.receipt-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.company-name {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.receipt-title {
+    font-size: 24px;
+    color: #7f8c8d;
+    margin-bottom: 10px;
+}
+
+.receipt-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.info-section {
+    flex: 1;
+    min-width: 200px;
+    margin: 10px;
+}
+
+.info-section h3 {
+    color: #34495e;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.booking-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.booking-table th {
+    background: #34495e;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+.booking-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.payment-summary {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 20px 0;
+}
+
+.payment-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+}
+
+.total-row {
+    border-top: 2px solid #34495e;
+    font-weight: bold;
+    font-size: 18px;
+    color: #2c3e50;
+}
+
+.receipt-actions {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.print-btn, .download-btn {
+    background: #3498db;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 0 10px;
+}
+
+.download-btn {
+    background: #27ae60;
+}
+
+.print-btn:hover {
+    background: #2980b9;
+}
+
+.download-btn:hover {
+    background: #219a52;
+}
+
+@media print {
+    .receipt-actions {
+        display: none;
+    }
+    
+    .receipt-section {
+        border: none;
+        box-shadow: none;
+        margin: 0;
+        padding: 20px;
+    }
+}
+/* Receipt Styles */
+.receipt-section {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    border: 2px solid #333;
+}
+
+.receipt-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.company-name {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.receipt-title {
+    font-size: 24px;
+    color: #7f8c8d;
+    margin-bottom: 10px;
+}
+
+.receipt-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.info-section {
+    flex: 1;
+    min-width: 250px;
+    margin: 10px;
+}
+
+.info-section h3 {
+    color: #34495e;
+    margin-bottom: 10px;
+    font-size: 16px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.booking-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background: white;
+}
+
+.booking-table th {
+    background: #34495e;
+    color: white;
+    padding: 12px;
+    text-align: left;
+}
+
+.booking-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.booking-table tr:hover {
+    background: #f8f9fa;
+}
+
+.payment-summary {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 20px 0;
+    border-left: 4px solid #3498db;
+}
+
+.payment-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.total-row {
+    border-top: 2px solid #34495e;
+    font-weight: bold;
+    font-size: 18px;
+    color: #2c3e50;
+    border-bottom: none;
+}
+
+.receipt-actions {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.receipt-actions .btn {
+    margin: 5px;
+    padding: 10px 20px;
+}
+
+@media print {
+    .receipt-actions {
+        display: none;
+    }
+    
+    .receipt-section {
+        border: none;
+        box-shadow: none;
+        margin: 0;
+        padding: 20px;
+    }
+    
+    .header, .nav {
+        display: none;
+    }
+}

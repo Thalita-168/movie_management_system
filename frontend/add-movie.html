@@ -1,0 +1,84 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Movie - MyMovies</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/auth.css">
+    <link rel="stylesheet" href="styles/add-movie.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">🎬 MyMovies</h1>
+            <nav class="nav">
+                <a href="index.html" class="btn btn-secondary">← Back to Collection</a>
+            </nav>
+        </div>
+    </header>
+    <main class="main">
+        <div class="container">
+            <div class="form-container">
+                <h1>Add New Movie</h1>
+                <!-- Debug info -->
+                <div class="debug-panel">
+                    <strong>Debug Info:</strong>
+                    <div id="debugStatus">Loading...</div>
+                    <div id="movieCount">Checking movies...</div>
+                    <div id="formStatus">Form status: Ready</div>
+                </div>
+                
+                <form id="addMovieForm" class="movie-form">
+                    <div class="form-group">
+                        <label for="title">Movie Title *</label>
+                        <input type="text" id="title" name="title" required placeholder="Enter movie title">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="posterUrl">Poster Image URL (optional)</label>
+                        <input type="url" id="posterUrl" name="posterUrl" placeholder="https://example.com/poster.jpg">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="status">Status *</label>
+                        <select id="status" name="status" required>
+                            <option value="">Select status...</option>
+                            <option value="watched">Watched</option>
+                            <option value="want-to-watch">Want to Watch</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="rating">Your Rating (1-5)</label>
+                        <select id="rating" name="rating">
+                            <option value="">No rating</option>
+                            <option value="1">⭐ (1 star)</option>
+                            <option value="2">⭐⭐ (2 stars)</option>
+                            <option value="3">⭐⭐⭐ (3 stars)</option>
+                            <option value="4">⭐⭐⭐⭐ (4 stars)</option>
+                            <option value="5">⭐⭐⭐⭐⭐ (5 stars)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="notes">Notes (optional)</label>
+                        <textarea id="notes" name="notes" rows="4" placeholder="Your thoughts about the movie..."></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Add Movie</button>
+                        <a href="index.html" class="btn btn-secondary">Cancel</a>
+                        <button type="button" class="btn btn-success" onclick="testAddMovie()">Test Add Movie</button>
+                        <button type="button" class="btn btn-danger" onclick="clearAllMovies()">Clear All Movies</button>
+                        <button type="button" class="btn" onclick="addSampleMovies()" style="background: #8e44ad; color: white;">Add Sample Movies</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/storage.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/movies.js"></script>
+    <script src="js/add-movie.js"></script>
+</body>
+</html>
