@@ -167,6 +167,35 @@ function showLoginPrompt() {
         `;
     }
 }
+class MoviesAPI {
+    // Get all movies
+    static async getAllMovies() {
+        return await apiCall('/movies');
+    }
+    
+    // Add new movie
+    static async addMovie(movieData) {
+        return await apiCall('/movies', {
+            method: 'POST',
+            body: JSON.stringify(movieData)
+        });
+    }
+    
+    // Update movie
+    static async updateMovie(movieId, movieData) {
+        return await apiCall(`/movies/${movieId}`, {
+            method: 'PUT',
+            body: JSON.stringify(movieData)
+        });
+    }
+    
+    // Delete movie
+    static async deleteMovie(movieId) {
+        return await apiCall(`/movies/${movieId}`, {
+            method: 'DELETE'
+        });
+    }
+}
 
 // Refresh function that can be called from other pages
 function refreshMovies() {

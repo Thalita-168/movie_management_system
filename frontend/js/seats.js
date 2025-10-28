@@ -411,6 +411,22 @@ function handleBookingSuccess(bookingData) {
     // Optional: Also show a success notification
     showNotification('🎉 Booking confirmed successfully!', 'success');
 }
+class BookingAPI {
+    static async getShowtimes(movieId) {
+        return await apiCall(`/showtimes/movie/${movieId}`);
+    }
+    
+    static async getAvailableSeats(showtimeId) {
+        return await apiCall(`/seats/showtime/${showtimeId}`);
+    }
+    
+    static async bookSeats(bookingData) {
+        return await apiCall('/bookings', {
+            method: 'POST',
+            body: JSON.stringify(bookingData)
+        });
+    }
+}
 // Helper function for notifications
 function showNotification(message, type = 'info') {
     // Create a simple notification

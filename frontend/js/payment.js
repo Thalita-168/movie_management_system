@@ -53,3 +53,15 @@ function showNotification(message, type = 'info') {
         }
     }, 3000);
 }
+class PaymentAPI {
+    static async createPayment(bookingId, paymentData) {
+        return await apiCall(`/payments/booking/${bookingId}`, {
+            method: 'POST',
+            body: JSON.stringify(paymentData)
+        });
+    }
+    
+    static async verifyPayment(paymentId) {
+        return await apiCall(`/payments/${paymentId}/verify`);
+    }
+}

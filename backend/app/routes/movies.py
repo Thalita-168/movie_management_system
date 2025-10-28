@@ -1,21 +1,14 @@
-from flask import Blueprint, request, jsonify
-from app import db
-from app.models import Movie
+from flask import Blueprint, jsonify, request
 
-movies_bp = Blueprint('movies', __name__)
+bp = Blueprint('movies', __name__)
 
-@movies_bp.route('/', methods=['GET'])
+@bp.route('/', methods=['GET'])
 def get_movies():
-    try:
-        movies = Movie.query.filter_by(is_active=True).all()
-        return jsonify([movie.to_dict() for movie in movies]), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    # Your movie logic here
+    return jsonify({"movies": []})
 
-@movies_bp.route('/<int:movie_id>', methods=['GET'])
-def get_movie(movie_id):
-    try:
-        movie = Movie.query.get_or_404(movie_id)
-        return jsonify(movie.to_dict()), 200
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+@bp.route('/', methods=['POST'])
+def add_movie():
+    data = request.get_json()
+    # Your add movie logic
+    return jsonify({"message": "Movie added"})

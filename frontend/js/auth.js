@@ -469,7 +469,25 @@ function checkAdmin() {
     }
     return true;
 }
-
+class AuthAPI {
+    static async login(credentials) {
+        return await apiCall('/auth/login', {
+            method: 'POST',
+            body: JSON.stringify(credentials)
+        });
+    }
+    
+    static async register(userData) {
+        return await apiCall('/auth/register', {
+            method: 'POST',
+            body: JSON.stringify(userData)
+        });
+    }
+    
+    static async logout() {
+        return await apiCall('/auth/logout');
+    }
+}
 // Global helper so older scripts can call isLoggedIn()
 function isLoggedIn() {
     try {
