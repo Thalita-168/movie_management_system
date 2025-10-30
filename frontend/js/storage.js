@@ -1,43 +1,5 @@
-// Storage Manager - Personal Movie Collection Version
-window.API_BASE_URL = 'http://127.0.0.1:5000/api';
+// Storage Manager - Fixed version with admin support
 class StorageManager {
-    constructor() {
-        this.initializeAdmin();
-        this.initializeUserMovies();
-        console.log('🚀 Personal Movie Storage Manager initialized');
-    }
-
-    // Initialize admin user if not exists
-    initializeAdmin() {
-        const users = this.getAllUsers();
-        const adminExists = users.find(user => user.role === 'admin');
-        
-        if (!adminExists) {
-            const adminUser = {
-                id: 'admin-' + Date.now(),
-                username: 'admin',
-                email: 'admin@mymovies.com',
-                password: 'admin123',
-                name: 'System Administrator',
-                phone: '(555) 000-0001',
-                role: 'admin',
-                createdAt: new Date().toISOString()
-            };
-            
-            users.push(adminUser);
-            this.saveAllUsers(users);
-            console.log('👑 Admin user created');
-        }
-    }
-
-    // Initialize user movies storage if empty
-    initializeUserMovies() {
-        if (!localStorage.getItem('userMovies')) {
-            this.saveUserMovies({});
-            console.log('🎬 User movies storage initialized (empty)');
-        }
-    }
-
     // User methods
     saveUser(user) {
         localStorage.setItem('currentUser', JSON.stringify(user));
@@ -54,7 +16,7 @@ class StorageManager {
 
     registerUser(userData) {
         try {
-            const users = this.getAllUsers();
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
             
             console.log('Checking existing users:', users);
             
@@ -69,20 +31,18 @@ class StorageManager {
             }
             
             const user = {
-                id: 'user-' + Date.now(),
+                id: Date.now().toString(),
                 username: userData.username,
                 email: userData.email,
                 password: userData.password,
-                name: userData.name || userData.username,
-                phone: userData.phone || '',
-                role: 'user',
+                role: userData.role || 'user', // Default to 'user' role
                 createdAt: new Date().toISOString()
             };
             
             users.push(user);
-            this.saveAllUsers(users);
+            localStorage.setItem('users', JSON.stringify(users));
             
-            console.log('✅ User registered successfully:', user);
+            console.log('User registered successfully:', user);
             return user;
         } catch (error) {
             console.error('Registration error:', error);
@@ -91,160 +51,260 @@ class StorageManager {
     }
 
     authenticateUser(username, password) {
-        const users = this.getAllUsers();
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
         const user = users.find(u => u.username === username && u.password === password);
         return user || null;
     }
 
-    // PERSONAL MOVIE METHODS - Any logged in user can use these
-    getUserMovies() {
+    // Movie methods - UPDATED WITH ADMIN SUPPORT
+    getMovies() {
         const currentUser = this.getCurrentUser();
+        console.log('📀 Getting movies for user:', currentUser?.username, 'role:', currentUser?.role);
+        
         if (!currentUser) {
-            console.log('❌ No user logged in');
+            console.log('❌ No current user found');
             return [];
         }
 
-        const userMovies = JSON.parse(localStorage.getItem('userMovies') || '{}');
-        const myMovies = userMovies[currentUser.username] || [];
+        // ADMIN: Get all movies from global collection
+        if (currentUser.role === 'admin') {
+            const globalMovies = JSON.parse(localStorage.getItem('globalMovies') || '[]');
+            const userMovies = JSON.parse(localStorage.getItem('userMovies') || '{}');
+            
+            console.log('👑 Admin accessing all movies');
+            console.log('🌐 Global movies:', globalMovies.length);
+            console.log('👥 User movies:', Object.keys(userMovies).length);
+            
+            // Combine all movies for admin view
+            let allMovies = [...globalMovies];
+            Object.values(userMovies).forEach(userMovieList => {
+                if (Array.isArray(userMovieList)) {
+                    allMovies = [...allMovies, ...userMovieList];
+                }
+            });
+            
+            console.log('🎬 Total movies for admin:', allMovies.length);
+            return allMovies;
+        }
         
-        console.log(`📀 Getting movies for ${currentUser.username}:`, myMovies.length);
-        return myMovies;
+        // REGULAR USER: Get only their movies
+        const userMovies = JSON.parse(localStorage.getItem('userMovies') || '{}');
+        const movies = userMovies[currentUser.username] || [];
+        console.log('📀 User movies found:', movies.length);
+        return movies;
     }
 
-    addUserMovie(movieData) {
-        console.log('➕ StorageManager.addUserMovie() called with:', movieData);
+    // UPDATED: Admin adds to global collection, users add to personal collection
+    addMovie(movieData) {
+        console.log('➕ StorageManager.addMovie() called with:', movieData);
         
         const currentUser = this.getCurrentUser();
         if (!currentUser) {
-            throw new Error('Please log in to add movies');
+            throw new Error('No user logged in');
         }
         
-        const userMovies = JSON.parse(localStorage.getItem('userMovies') || '{}');
-        
-        // Initialize user's movie collection if it doesn't exist
-        if (!userMovies[currentUser.username]) {
-            userMovies[currentUser.username] = [];
-        }
-        
-        console.log(`📀 Current movies for ${currentUser.username} before adding:`, userMovies[currentUser.username].length);
-        
-        // Create new movie for personal collection
+        // Create new movie with unique ID
         const newMovie = {
-            id: 'movie-' + Date.now(),
+            id: 'm-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
             title: movieData.title,
-            posterUrl: movieData.posterUrl || '',
-            status: movieData.status || 'want-to-watch',
+            posterUrl: movieData.posterUrl || './assets/default-poster.jpg',
+            status: movieData.status,
             rating: movieData.rating || null,
             notes: movieData.notes || '',
-            genre: movieData.genre || '',
-            year: movieData.year || '',
+            addedBy: currentUser.username,
+            userRole: currentUser.role,
             createdAt: new Date().toISOString(),
-            createdBy: currentUser.username
+            updatedAt: new Date().toISOString()
         };
         
-        console.log('🎬 Creating new personal movie:', newMovie);
+        console.log('🎬 Creating new movie:', newMovie);
         
-        // Add to user's personal collection
-        userMovies[currentUser.username].push(newMovie);
-        this.saveUserMovies(userMovies);
-        
-        console.log('✅ Movie added to personal collection. Total movies now:', userMovies[currentUser.username].length);
+        // ADMIN: Add to global movie collection
+        if (currentUser.role === 'admin') {
+            console.log('👑 Admin adding to global collection');
+            const globalMovies = JSON.parse(localStorage.getItem('globalMovies') || '[]');
+            globalMovies.push(newMovie);
+            localStorage.setItem('globalMovies', JSON.stringify(globalMovies));
+            console.log('✅ Movie added to global collection. Total:', globalMovies.length);
+        } 
+        // REGULAR USER: Add to personal collection
+        else {
+            console.log('👤 User adding to personal collection');
+            const userMovies = JSON.parse(localStorage.getItem('userMovies') || '{}');
+            const movies = userMovies[currentUser.username] || [];
+            movies.push(newMovie);
+            userMovies[currentUser.username] = movies;
+            localStorage.setItem('userMovies', JSON.stringify(userMovies));
+            console.log('✅ Movie added to user collection. Total:', movies.length);
+        }
         
         return newMovie;
     }
 
-    saveUserMovies(userMovies) {
-        console.log('💾 Saving user movies structure');
-        localStorage.setItem('userMovies', JSON.stringify(userMovies));
-        console.log('💾 User movies saved successfully');
-    }
-
-    updateUserMovie(movieId, updates) {
+    saveMovies(movies) {
         const currentUser = this.getCurrentUser();
+        console.log('💾 Saving movies for user:', currentUser?.username, 'role:', currentUser?.role);
+        
         if (!currentUser) {
-            throw new Error('Please log in to update movies');
+            console.log('❌ No user logged in, cannot save movies');
+            return;
         }
 
-        const userMovies = JSON.parse(localStorage.getItem('userMovies') || '{}');
-        const userMovieList = userMovies[currentUser.username] || [];
-        
-        const index = userMovieList.findIndex(movie => movie.id === movieId);
-        if (index !== -1) {
-            userMovieList[index] = {
-                ...userMovieList[index],
-                ...updates,
-                updatedAt: new Date().toISOString()
-            };
-            userMovies[currentUser.username] = userMovieList;
-            this.saveUserMovies(userMovies);
-            return userMovieList[index];
+        // ADMIN: Save to appropriate location based on movie ownership
+        if (currentUser.role === 'admin') {
+            console.log('👑 Admin saving movies');
+            // This is complex for admin, so we'll handle specific cases differently
+            // For now, we'll mainly use addMovie/updateMovie/deleteMovie
+        } 
+        // REGULAR USER: Save to personal collection
+        else {
+            const userMovies = JSON.parse(localStorage.getItem('userMovies') || '{}');
+            userMovies[currentUser.username] = movies;
+            localStorage.setItem('userMovies', JSON.stringify(userMovies));
+            console.log('💾 User movies saved successfully');
         }
-        return null;
     }
 
-    deleteUserMovie(movieId) {
-        const currentUser = this.getCurrentUser();
-        if (!currentUser) {
-            throw new Error('Please log in to delete movies');
-        }
-
-        const userMovies = JSON.parse(localStorage.getItem('userMovies') || '{}');
-        const userMovieList = userMovies[currentUser.username] || [];
-        
-        const filteredMovies = userMovieList.filter(movie => movie.id !== movieId);
-        userMovies[currentUser.username] = filteredMovies;
-        this.saveUserMovies(userMovies);
-        
-        return filteredMovies.length !== userMovieList.length;
-    }
-
-    getUserMovie(movieId) {
+    updateMovie(movieId, updates) {
         const currentUser = this.getCurrentUser();
         if (!currentUser) return null;
 
+        console.log('✏️ Updating movie:', movieId, 'by user:', currentUser.username);
+
+        // ADMIN: Can update any movie
+        if (currentUser.role === 'admin') {
+            let updated = false;
+            
+            // Update in global movies
+            const globalMovies = JSON.parse(localStorage.getItem('globalMovies') || '[]');
+            const globalIndex = globalMovies.findIndex(movie => movie.id === movieId);
+            if (globalIndex !== -1) {
+                globalMovies[globalIndex] = {
+                    ...globalMovies[globalIndex],
+                    ...updates,
+                    updatedAt: new Date().toISOString(),
+                    updatedBy: currentUser.username
+                };
+                localStorage.setItem('globalMovies', JSON.stringify(globalMovies));
+                updated = true;
+                console.log('✅ Updated in global movies');
+            }
+            
+            // Update in user movies
+            const userMovies = JSON.parse(localStorage.getItem('userMovies') || '{}');
+            for (const username in userMovies) {
+                const userIndex = userMovies[username].findIndex(movie => movie.id === movieId);
+                if (userIndex !== -1) {
+                    userMovies[username][userIndex] = {
+                        ...userMovies[username][userIndex],
+                        ...updates,
+                        updatedAt: new Date().toISOString(),
+                        updatedBy: currentUser.username
+                    };
+                    localStorage.setItem('userMovies', JSON.stringify(userMovies));
+                    updated = true;
+                    console.log('✅ Updated in user movies for:', username);
+                }
+            }
+            
+            return updated;
+        }
+        // REGULAR USER: Can only update their own movies
+        else {
+            const movies = this.getMovies();
+            const index = movies.findIndex(movie => movie.id === movieId);
+            if (index !== -1) {
+                movies[index] = {
+                    ...movies[index],
+                    ...updates,
+                    updatedAt: new Date().toISOString()
+                };
+                this.saveMovies(movies);
+                console.log('✅ User updated their movie');
+                return movies[index];
+            }
+        }
+        
+        return null;
+    }
+
+    deleteMovie(movieId) {
+        const currentUser = this.getCurrentUser();
+        if (!currentUser) return false;
+
+        console.log('🗑️ Deleting movie:', movieId, 'by user:', currentUser.username);
+
+        // ADMIN: Can delete any movie from any collection
+        if (currentUser.role === 'admin') {
+            let deleted = false;
+            
+            // Delete from global movies
+            const globalMovies = JSON.parse(localStorage.getItem('globalMovies') || '[]');
+            const updatedGlobalMovies = globalMovies.filter(movie => movie.id !== movieId);
+            if (updatedGlobalMovies.length !== globalMovies.length) {
+                localStorage.setItem('globalMovies', JSON.stringify(updatedGlobalMovies));
+                deleted = true;
+                console.log('✅ Deleted from global movies');
+            }
+            
+            // Delete from user movies
+            const userMovies = JSON.parse(localStorage.getItem('userMovies') || '{}');
+            for (const username in userMovies) {
+                const updatedUserMovies = userMovies[username].filter(movie => movie.id !== movieId);
+                if (updatedUserMovies.length !== userMovies[username].length) {
+                    userMovies[username] = updatedUserMovies;
+                    deleted = true;
+                    console.log('✅ Deleted from user movies for:', username);
+                }
+            }
+            localStorage.setItem('userMovies', JSON.stringify(userMovies));
+            
+            return deleted;
+        }
+        // REGULAR USER: Can only delete their own movies
+        else {
+            const movies = this.getMovies();
+            const filteredMovies = movies.filter(movie => movie.id !== movieId);
+            const deleted = filteredMovies.length !== movies.length;
+            if (deleted) {
+                this.saveMovies(filteredMovies);
+                console.log('✅ User deleted their movie');
+            }
+            return deleted;
+        }
+    }
+
+    getMovie(movieId) {
+        const movies = this.getMovies();
+        return movies.find(movie => movie.id === movieId) || null;
+    }
+
+    // ADMIN-ONLY: Get all movies from all users (for admin panel)
+    getAllMoviesForAdmin() {
+        const currentUser = this.getCurrentUser();
+        if (!currentUser || currentUser.role !== 'admin') {
+            console.log('❌ Admin access required for getAllMoviesForAdmin');
+            return [];
+        }
+
+        const globalMovies = JSON.parse(localStorage.getItem('globalMovies') || '[]');
         const userMovies = JSON.parse(localStorage.getItem('userMovies') || '{}');
-        const userMovieList = userMovies[currentUser.username] || [];
         
-        return userMovieList.find(movie => movie.id === movieId) || null;
-    }
-
-    // User management methods
-    getAllUsers() {
-        return JSON.parse(localStorage.getItem('users') || '[]');
-    }
-
-    saveAllUsers(users) {
-        localStorage.setItem('users', JSON.stringify(users));
-    }
-
-    // Role management methods
-    isAdmin() {
-        const currentUser = this.getCurrentUser();
-        return currentUser && currentUser.role === 'admin';
-    }
-
-    getCurrentUserRole() {
-        const currentUser = this.getCurrentUser();
-        return currentUser ? currentUser.role : 'guest';
-    }
-
-    promoteToAdmin(username) {
-        if (!this.isAdmin()) {
-            throw new Error('Access denied! Only administrators can promote users.');
-        }
+        let allMovies = [...globalMovies];
         
-        const users = this.getAllUsers();
-        const userIndex = users.findIndex(user => user.username === username);
+        // Add user movies with owner information
+        Object.entries(userMovies).forEach(([username, movies]) => {
+            movies.forEach(movie => {
+                allMovies.push({
+                    ...movie,
+                    owner: username,
+                    isGlobal: false
+                });
+            });
+        });
         
-        if (userIndex === -1) {
-            throw new Error('User not found');
-        }
-        
-        users[userIndex].role = 'admin';
-        this.saveAllUsers(users);
-        
-        console.log(`✅ User ${username} promoted to admin`);
-        return users[userIndex];
+        console.log('👑 Admin retrieved all movies:', allMovies.length);
+        return allMovies;
     }
 }
 
@@ -255,46 +315,64 @@ const storageManager = new StorageManager();
 function saveUser(user) { storageManager.saveUser(user); }
 function getCurrentUser() { return storageManager.getCurrentUser(); }
 function logoutUser() { storageManager.logoutUser(); }
-
-// PERSONAL MOVIE FUNCTIONS - Use these for your personal collection
-function getUserMovies() { 
-    return storageManager.getUserMovies(); 
+function saveMovies(movies) { storageManager.saveMovies(movies); }
+function getMovies() { return storageManager.getMovies(); }
+function addMovie(movieData) { 
+    console.log('➕ addMovie() legacy function called');
+    return storageManager.addMovie(movieData); 
 }
-
-function addUserMovie(movieData) { 
-    console.log('➕ addUserMovie() function called');
-    return storageManager.addUserMovie(movieData); 
-}
-
-function updateUserMovie(movieId, updates) { 
-    return storageManager.updateUserMovie(movieId, updates); 
-}
-
-function deleteUserMovie(movieId) { 
-    return storageManager.deleteUserMovie(movieId); 
-}
-
-function getUserMovie(movieId) { 
-    return storageManager.getUserMovie(movieId); 
-}
+function updateMovie(movieId, updates) { return storageManager.updateMovie(movieId, updates); }
+function deleteMovie(movieId) { return storageManager.deleteMovie(movieId); }
+function getMovie(movieId) { return storageManager.getMovie(movieId); }
 
 // Authentication functions
-function registerUser(userData) {
-    return storageManager.registerUser(userData);
-}
-
 function authenticateUser(username, password) {
     console.log('🔐 authenticateUser called with:', username);
-    const user = storageManager.authenticateUser(username, password);
-    console.log('👤 Authentication result:', user ? `SUCCESS (Role: ${user.role})` : 'FAILED');
-    return user;
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const user = users.find(u => u.username === username && u.password === password);
+    console.log('👤 Authentication result:', user ? 'SUCCESS' : 'FAILED');
+    return user || null;
 }
 
-// Simple role check
+function registerUser(userData) {
+    console.log('📝 registerUser called with:', userData);
+    try {
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        
+        console.log('Checking existing users:', users);
+        
+        // Check if username already exists
+        if (users.find(user => user.username === userData.username)) {
+            throw new Error('Username already exists');
+        }
+        
+        // Check if email already exists
+        if (users.find(user => user.email === userData.email)) {
+            throw new Error('Email already exists');
+        }
+        
+        const user = {
+            id: Date.now().toString(),
+            username: userData.username,
+            email: userData.email,
+            password: userData.password,
+            role: userData.role || 'user', // Include role in registration
+            createdAt: new Date().toISOString()
+        };
+        
+        users.push(user);
+        localStorage.setItem('users', JSON.stringify(users));
+        
+        console.log('✅ User registered successfully:', user);
+        return user;
+    } catch (error) {
+        console.error('❌ Registration error:', error);
+        throw error;
+    }
+}
+
+// Admin utility function
 function isAdmin() {
-    return storageManager.isAdmin();
-}
-
-function getCurrentUserRole() {
-    return storageManager.getCurrentUserRole();
+    const currentUser = getCurrentUser();
+    return currentUser && currentUser.role === 'admin';
 }

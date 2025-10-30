@@ -1,4 +1,4 @@
-window.API_BASE_URL = 'http://127.0.0.1:5000/api';
+window.API_BASE_URL = 'http://127.0.0.1:5500/api';
 // User Management System
 console.log('=== USER MANAGEMENT LOADED ===');
 

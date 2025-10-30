@@ -1,6 +1,68 @@
-// API Configuration
-window.API_BASE_URL = 'http://127.0.0.1:5000/api';
 
+// API Configuration
+const API_CONFIG = {
+    BASE_URL: 'http://localhost:8000/api',
+    ENDPOINTS: {
+        AUTH: {
+            LOGIN: '/auth/login/',
+            REGISTER: '/auth/register/',
+            PROFILE: '/auth/profile/'
+        },
+        MOVIES: {
+            LIST: '/movies/',
+            DETAIL: '/movies/{id}/',
+            CREATE: '/movies/create/',
+            UPDATE: '/movies/{id}/update/',
+            DELETE: '/movies/{id}/delete/'
+        },
+        BOOKINGS: {
+            LIST: '/bookings/',
+            CREATE: '/bookings/',
+            USER_BOOKINGS: '/bookings/user/'
+        }
+    }
+};
+
+// Utility Functions
+class ApiUtils {
+    static getAuthHeaders() {
+        const token = localStorage.getItem('access_token');
+        return {
+            'Content-Type': 'application/json',
+            'Authorization': token ? `Bearer ${token}` : ''
+        };
+    }
+
+    static async handleResponse(response) {
+        if (response.ok) {
+            return await response.json();
+        } else {
+            const error = await response.json();
+            throw new Error(error.detail || error.message || 'Something went wrong');
+        }
+    }
+
+    static buildUrl(endpoint, params = {}) {
+        let url = `${API_CONFIG.BASE_URL}${endpoint}`;
+        for (const [key, value] of Object.entries(params)) {
+            url = url.replace(`{${key}}`, value);
+        }
+        return url;
+    }
+
+    static isAuthenticated() {
+        return !!localStorage.getItem('access_token');
+    }
+
+    static getCurrentUser() {
+        const user = localStorage.getItem('user');
+        return user ? JSON.parse(user) : null;
+    }
+
+    static redirectToLogin() {
+        window.location.href = '../html/login.html';
+    }
+}
 // API Helper Functions
 class API {
     static async request(endpoint, options = {}) {

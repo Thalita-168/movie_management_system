@@ -1,6 +1,6 @@
 // Seat Booking System
 // Use a single global API base URL to avoid duplicate-const errors across scripts
-window.API_BASE_URL = window.API_BASE_URL || 'http://127.0.0.1:5000/api';
+window.API_BASE_URL = window.API_BASE_URL || 'http://127.0.0.1:5500/api';
 const API_BASE_URL = window.API_BASE_URL;
 
 // Create booking
@@ -410,22 +410,6 @@ function handleBookingSuccess(bookingData) {
     
     // Optional: Also show a success notification
     showNotification('🎉 Booking confirmed successfully!', 'success');
-}
-class BookingAPI {
-    static async getShowtimes(movieId) {
-        return await apiCall(`/showtimes/movie/${movieId}`);
-    }
-    
-    static async getAvailableSeats(showtimeId) {
-        return await apiCall(`/seats/showtime/${showtimeId}`);
-    }
-    
-    static async bookSeats(bookingData) {
-        return await apiCall('/bookings', {
-            method: 'POST',
-            body: JSON.stringify(bookingData)
-        });
-    }
 }
 // Helper function for notifications
 function showNotification(message, type = 'info') {

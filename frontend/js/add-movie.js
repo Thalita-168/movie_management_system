@@ -1,17 +1,16 @@
-// Add Movie Page Logic
-window.API_BASE_URL = 'http://127.0.0.1:5000/api';
+// Add Movie Page - SIMPLE VERSION
 console.log('=== ADD MOVIE PAGE LOADED ===');
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if user is logged in
-    const currentUser = getCurrentUser();
-    if (!currentUser) {
-        alert('Please log in to add movies!');
-        window.location.href = 'login.html';
+    // Check if admin
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!currentUser || currentUser.role !== 'admin') {
+        alert('Only admin can add movies!');
+        window.location.href = 'index.html';
         return;
     }
 
-    // Setup form submission
+    // Setup form
     const form = document.getElementById('addMovieForm');
     if (form) {
         form.addEventListener('submit', function(e) {
@@ -33,37 +32,74 @@ function addMovie() {
         return;
     }
 
-    try {
-        const newMovie = addUserMovie({
-            title: title,
-            posterUrl: posterUrl,
-            status: status,
-            rating: rating,
-            notes: notes
-        });
-
-        console.log('✅ Movie added to your personal collection:', newMovie);
-        alert('🎉 Movie added to your collection!');
-        window.location.href = 'index.html';
-    } catch (error) {
-        alert('Error: ' + error.message);
-    }
-}
-function debugStorage() {
-    console.log('=== STORAGE DEBUG ===');
-    const currentUser = getCurrentUser();
-    console.log('Current User:', currentUser);
-    
+    // Get current movies
     const userMovies = JSON.parse(localStorage.getItem('userMovies') || '{}');
-    console.log('All User Movies:', userMovies);
-    
-    if (currentUser) {
-        const myMovies = userMovies[currentUser.username] || [];
-        console.log(`My Movies (${currentUser.username}):`, myMovies);
-        console.log('Movie titles:', myMovies.map(m => m.title));
+    if (!userMovies.public) {
+        userMovies.public = [];
     }
-    console.log('=== END DEBUG ===');
+
+    // Create new movie
+    const newMovie = {
+        id: 'movie-' + Date.now(),
+        title: title,
+        posterUrl: posterUrl || '',
+        status: status,
+        rating: rating || null,
+        notes: notes || '',
+        createdBy: 'Admin',
+        createdAt: new Date().toISOString()
+    };
+
+    // Add to public movies
+    userMovies.public.push(newMovie);
+    localStorage.setItem('userMovies', JSON.stringify(userMovies));
+
+    console.log('✅ Movie added to PUBLIC collection:', newMovie);
+    alert('🎉 Movie added! All users can see it now.');
+    window.location.href = 'index.html';
 }
 
-// Call this after adding a movie
-// debugStorage();
+// Test function to add sample movies
+function addSampleMovies() {
+    const sampleMovies = [
+        {
+            title: "Avengers: Endgame",
+            posterUrl: "",
+            status: "watched",
+            rating: "5",
+            notes: "Epic conclusion to the Avengers saga."
+        },
+        {
+            title: "Spider-Man: No Way Home", 
+            posterUrl: "",
+            status: "watched",
+            rating: "4",
+            notes: "Multiverse adventure with multiple Spider-Men."
+        },
+        {
+            title: "The Batman",
+            posterUrl: "", 
+            status: "want-to-watch",
+            rating: "",
+            notes: "Dark and gritty Batman reboot."
+        }
+    ];
+
+    const userMovies = JSON.parse(localStorage.getItem('userMovies') || '{}');
+    if (!userMovies.public) {
+        userMovies.public = [];
+    }
+
+    sampleMovies.forEach(movie => {
+        userMovies.public.push({
+            ...movie,
+            id: 'sample-' + Date.now() + '-' + Math.random().toString(36).substr(2, 6),
+            createdBy: 'Admin',
+            createdAt: new Date().toISOString()
+        });
+    });
+
+    localStorage.setItem('userMovies', JSON.stringify(userMovies));
+    alert('Sample movies added!');
+    window.location.href = 'index.html';
+}

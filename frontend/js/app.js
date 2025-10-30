@@ -1,5 +1,5 @@
 // Main application initialization
-window.API_BASE_URL = 'http://127.0.0.1:5000/api';
+window.API_BASE_URL = 'http://127.0.0.1:5500/api';
 document.addEventListener('DOMContentLoaded', function() {
     console.log('App initialized - Current page:', window.location.pathname);
     

@@ -1,5 +1,5 @@
 // Use a single global API base URL to avoid duplicate-const errors across scripts
-window.API_BASE_URL = window.API_BASE_URL || 'http://127.0.0.1:5000/api';
+window.API_BASE_URL = window.API_BASE_URL || 'http://127.0.0.1:5500/api';
 const API_BASE_URL = window.API_BASE_URL;
 
 // Verify payment
@@ -52,16 +52,4 @@ function showNotification(message, type = 'info') {
             notification.remove();
         }
     }, 3000);
-}
-class PaymentAPI {
-    static async createPayment(bookingId, paymentData) {
-        return await apiCall(`/payments/booking/${bookingId}`, {
-            method: 'POST',
-            body: JSON.stringify(paymentData)
-        });
-    }
-    
-    static async verifyPayment(paymentId) {
-        return await apiCall(`/payments/${paymentId}/verify`);
-    }
 }
