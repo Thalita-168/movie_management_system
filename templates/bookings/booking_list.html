@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings - Movie Booking</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Removed all Django template tags, converted to pure HTML with sample bookings -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="/movies/">Movie Booking</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/movies/">Movies</a></li>
+                <li><a href="/bookings/">My Bookings</a></li>
+                <li><a href="/accounts/profile/">Profile</a></li>
+                <li><a href="/accounts/logout/">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>My Bookings</h1>
+            </div>
+            
+            <div class="bookings-list">
+                <!-- Sample Booking 1 -->
+                <div class="booking-card">
+                    <div class="booking-header">
+                        <h3>The Dark Knight</h3>
+                        <span class="booking-status status-confirmed">Confirmed</span>
+                    </div>
+                    
+                    <div class="booking-details">
+                        <p><strong>Booking ID:</strong> BK-12345678-ABCD</p>
+                        <p><strong>Date:</strong> February 15, 2025</p>
+                        <p><strong>Time:</strong> 7:00 PM</p>
+                        <p><strong>Screen:</strong> 1</p>
+                        <p><strong>Seats:</strong> 2</p>
+                        <p><strong>Total Price:</strong> $30.00</p>
+                        <p><strong>Payment Status:</strong> Paid</p>
+                        <p><strong>Booked on:</strong> February 10, 2025 3:45 PM</p>
+                    </div>
+                    
+                    <div class="booking-actions">
+                        <a href="/bookings/BK-12345678-ABCD/" class="btn btn-secondary">View Details</a>
+                        <a href="/bookings/BK-12345678-ABCD/cancel/" class="btn btn-danger">Cancel Booking</a>
+                    </div>
+                </div>
+
+                <!-- Sample Booking 2 -->
+                <div class="booking-card">
+                    <div class="booking-header">
+                        <h3>Inception</h3>
+                        <span class="booking-status status-confirmed">Confirmed</span>
+                    </div>
+                    
+                    <div class="booking-details">
+                        <p><strong>Booking ID:</strong> BK-87654321-WXYZ</p>
+                        <p><strong>Date:</strong> February 18, 2025</p>
+                        <p><strong>Time:</strong> 5:30 PM</p>
+                        <p><strong>Screen:</strong> 2</p>
+                        <p><strong>Seats:</strong> 3</p>
+                        <p><strong>Total Price:</strong> $45.00</p>
+                        <p><strong>Payment Status:</strong> Paid</p>
+                        <p><strong>Booked on:</strong> February 12, 2025 10:20 AM</p>
+                    </div>
+                    
+                    <div class="booking-actions">
+                        <a href="/bookings/BK-87654321-WXYZ/" class="btn btn-secondary">View Details</a>
+                        <a href="/bookings/BK-87654321-WXYZ/cancel/" class="btn btn-danger">Cancel Booking</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Movie Booking System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Movie Booking System{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="{% url 'movies:movie_list' %}">Movie Booking</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{% url 'movies:movie_list' %}">Movies</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'bookings:booking_list' %}">My Bookings</a></li>
+                    {% if user.is_admin_user %}
+                        <li><a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a></li>
+                        <li><a href="{% url 'movies:movie_create' %}">Add Movie</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
+                    <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'accounts:login' %}">Login</a></li>
+                    <li><a href="{% url 'accounts:register' %}">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="message message-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <main class="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Movie Booking System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

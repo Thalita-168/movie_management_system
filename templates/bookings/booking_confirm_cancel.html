@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Cancel Booking - Movie Booking{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="confirm-delete">
+        <h1>Cancel Booking</h1>
+        <p>Are you sure you want to cancel this booking?</p>
+        
+        <div class="booking-summary">
+            <p><strong>Movie:</strong> {{ booking.showtime.movie.title }}</p>
+            <p><strong>Date:</strong> {{ booking.showtime.show_date|date:"F d, Y" }}</p>
+            <p><strong>Time:</strong> {{ booking.showtime.show_time|time:"g:i A" }}</p>
+            <p><strong>Seats:</strong> {{ booking.seats }}</p>
+            <p><strong>Total:</strong> ${{ booking.total_price }}</p>
+        </div>
+        
+        <p class="warning">Your payment will be refunded within 5-7 business days.</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-danger">Yes, Cancel Booking</button>
+                <a href="{% url 'bookings:booking_detail' booking.booking_id %}" class="btn btn-secondary">Keep Booking</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

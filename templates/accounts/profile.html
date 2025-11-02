@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Movie Booking</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Removed all Django template tags, converted to pure HTML -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="/movies/">Movie Booking</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/movies/">Movies</a></li>
+                <li><a href="/bookings/">My Bookings</a></li>
+                <li><a href="/accounts/profile/">Profile</a></li>
+                <li><a href="/accounts/logout/">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="profile-container">
+                <h1>My Profile</h1>
+                
+                <div class="profile-info">
+                    <p><strong>Username:</strong> john_doe</p>
+                    <p><strong>Role:</strong> Customer</p>
+                    <p><strong>Member Since:</strong> January 15, 2025</p>
+                </div>
+                
+                <form method="post" action="/accounts/profile/" class="profile-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="first_name">First Name</label>
+                            <input type="text" id="first_name" name="first_name" class="form-control" value="John">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="last_name">Last Name</label>
+                            <input type="text" id="last_name" name="last_name" class="form-control" value="Doe">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" class="form-control" value="john.doe@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" class="form-control" value="+1234567890">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="date_of_birth">Date of Birth</label>
+                        <input type="date" id="date_of_birth" name="date_of_birth" class="form-control" value="1990-01-01">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Movie Booking System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

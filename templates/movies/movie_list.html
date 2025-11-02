@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies - Movie Booking</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Converted to standalone HTML without template inheritance -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="{% url 'movies:movie_list' %}">Movie Booking</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{% url 'movies:movie_list' %}">Movies</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'bookings:booking_list' %}">My Bookings</a></li>
+                    {% if user.is_admin_user %}
+                        <li><a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a></li>
+                        <li><a href="{% url 'movies:movie_create' %}">Add Movie</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
+                    <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'accounts:login' %}">Login</a></li>
+                    <li><a href="{% url 'accounts:register' %}">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Now Showing</h1>
+            </div>
+            
+            <form method="get" class="search-form">
+                <div class="search-filters">
+                    <div class="form-group">
+                        {{ form.search }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.genre }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.sort_by }}
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Search</button>
+                </div>
+            </form>
+            
+            <div class="movie-grid">
+                {% for movie in movies %}
+                    <div class="movie-card">
+                        <div class="movie-poster">
+                            {% if movie.poster %}
+                                <img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
+                            {% else %}
+                                <img src="/placeholder.svg?height=400&width=300" alt="{{ movie.title }}">
+                            {% endif %}
+                        </div>
+                        <div class="movie-info">
+                            <h3>{{ movie.title }}</h3>
+                            <div class="movie-meta">
+                                <span class="rating">⭐ {{ movie.rating }}/10</span>
+                                <span class="duration">{{ movie.duration }} min</span>
+                            </div>
+                            <p class="movie-genres">
+                                {% for genre in movie.genres.all %}
+                                    <span class="genre-tag">{{ genre.name }}</span>
+                                {% endfor %}
+                            </p>
+                            <a href="{% url 'movies:movie_detail' movie.pk %}" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p class="no-results">No movies found.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Movie Booking System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Dark Knight - Movie Booking</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Removed all Django template tags, converted to pure HTML with sample data -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="/movies/">Movie Booking</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/movies/">Movies</a></li>
+                <li><a href="/bookings/">My Bookings</a></li>
+                <li><a href="/accounts/profile/">Profile</a></li>
+                <li><a href="/accounts/logout/">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="movie-detail">
+                <div class="movie-detail-header">
+                    <div class="movie-detail-poster">
+                        <img src="/placeholder.svg?height=500&width=350" alt="The Dark Knight">
+                    </div>
+                    
+                    <div class="movie-detail-info">
+                        <h1>The Dark Knight</h1>
+                        
+                        <div class="movie-detail-meta">
+                            <span class="rating">⭐ 9.0/10</span>
+                            <span>152 minutes</span>
+                            <span>English</span>
+                            <span>2008</span>
+                        </div>
+                        
+                        <div class="movie-genres">
+                            <span class="genre-tag">Action</span>
+                            <span class="genre-tag">Crime</span>
+                            <span class="genre-tag">Drama</span>
+                        </div>
+                        
+                        <div class="movie-description">
+                            <h3>Synopsis</h3>
+                            <p>When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.</p>
+                        </div>
+                        
+                        <div class="movie-credits">
+                            <p><strong>Director:</strong> Christopher Nolan</p>
+                            <p><strong>Cast:</strong> Christian Bale, Heath Ledger, Aaron Eckhart, Michael Caine</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="showtimes-section">
+                    <h2>Available Showtimes</h2>
+                    
+                    <div class="showtimes-grid">
+                        <!-- Sample Showtime 1 -->
+                        <div class="showtime-card">
+                            <div class="showtime-info">
+                                <p class="showtime-date">February 15, 2025</p>
+                                <p class="showtime-time">2:00 PM</p>
+                                <p class="showtime-screen">Screen 1</p>
+                                <p class="showtime-price">$12.00</p>
+                                <p class="showtime-seats">45 seats available</p>
+                            </div>
+                            <a href="/bookings/create/1/" class="btn btn-primary">Book Now</a>
+                        </div>
+
+                        <!-- Sample Showtime 2 -->
+                        <div class="showtime-card">
+                            <div class="showtime-info">
+                                <p class="showtime-date">February 15, 2025</p>
+                                <p class="showtime-time">5:30 PM</p>
+                                <p class="showtime-screen">Screen 2</p>
+                                <p class="showtime-price">$15.00</p>
+                                <p class="showtime-seats">38 seats available</p>
+                            </div>
+                            <a href="/bookings/create/2/" class="btn btn-primary">Book Now</a>
+                        </div>
+
+                        <!-- Sample Showtime 3 -->
+                        <div class="showtime-card">
+                            <div class="showtime-info">
+                                <p class="showtime-date">February 15, 2025</p>
+                                <p class="showtime-time">9:00 PM</p>
+                                <p class="showtime-screen">Screen 1</p>
+                                <p class="showtime-price">$15.00</p>
+                                <p class="showtime-seats">52 seats available</p>
+                            </div>
+                            <a href="/bookings/create/3/" class="btn btn-primary">Book Now</a>
+                        </div>
+
+                        <!-- Sample Showtime 4 -->
+                        <div class="showtime-card">
+                            <div class="showtime-info">
+                                <p class="showtime-date">February 16, 2025</p>
+                                <p class="showtime-time">1:00 PM</p>
+                                <p class="showtime-screen">Screen 3</p>
+                                <p class="showtime-price">$12.00</p>
+                                <p class="showtime-seats">60 seats available</p>
+                            </div>
+                            <a href="/bookings/create/4/" class="btn btn-primary">Book Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Movie Booking System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

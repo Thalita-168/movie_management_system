@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Details - Movie Booking</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <!-- Removed all Django template tags, converted to pure HTML with sample data -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="/movies/">Movie Booking</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="/movies/">Movies</a></li>
+                <li><a href="/bookings/">My Bookings</a></li>
+                <li><a href="/accounts/profile/">Profile</a></li>
+                <li><a href="/accounts/logout/">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="booking-detail">
+                <div class="page-header">
+                    <h1>Booking Details</h1>
+                    <span class="booking-status status-confirmed">Confirmed</span>
+                </div>
+                
+                <div class="ticket">
+                    <div class="ticket-header">
+                        <h2>The Dark Knight</h2>
+                    </div>
+                    
+                    <div class="ticket-body">
+                        <div class="ticket-info">
+                            <div class="info-row">
+                                <span class="label">Booking ID:</span>
+                                <span class="value">BK-12345678-ABCD</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Date:</span>
+                                <span class="value">February 15, 2025</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Time:</span>
+                                <span class="value">7:00 PM</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Screen:</span>
+                                <span class="value">1</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Seats:</span>
+                                <span class="value">2</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Total Price:</span>
+                                <span class="value">$30.00</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Payment Status:</span>
+                                <span class="value">Paid</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Booked By:</span>
+                                <span class="value">John Doe</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Booking Date:</span>
+                                <span class="value">February 10, 2025 3:45 PM</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ticket-footer">
+                        <p>Please arrive 15 minutes before showtime</p>
+                    </div>
+                </div>
+                
+                <div class="booking-actions">
+                    <button onclick="window.print()" class="btn btn-secondary">Print Ticket</button>
+                    <a href="/bookings/BK-12345678-ABCD/cancel/" class="btn btn-danger">Cancel Booking</a>
+                    <a href="/bookings/" class="btn btn-primary">Back to My Bookings</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Movie Booking System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

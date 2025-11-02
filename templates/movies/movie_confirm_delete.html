@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Movie - Movie Booking{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="confirm-delete">
+        <h1>Confirm Delete</h1>
+        <p>Are you sure you want to delete the movie "{{ movie.title }}"?</p>
+        <p class="warning">This action cannot be undone. All associated showtimes and bookings will also be deleted.</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                <a href="{% url 'movies:movie_detail' movie.pk %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
