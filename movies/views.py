@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
+from accounts.decorators import admin_required
 from .models import Movie, Showtime, Genre
 from .forms import MovieForm, ShowtimeForm, MovieSearchForm
 
@@ -49,13 +50,9 @@ def movie_detail_view(request, pk):
     return render(request, 'movies/movie_detail.html', context)
 
 
-@login_required
+@admin_required
 def movie_create_view(request):
     """Create a new movie (admin only)"""
-    if not request.user.is_admin_user:
-        messages.error(request, 'You do not have permission to access this page.')
-        return redirect('movies:movie_list')
-    
     if request.method == 'POST':
         form = MovieForm(request.POST, request.FILES)
         if form.is_valid():
@@ -68,13 +65,9 @@ def movie_create_view(request):
     return render(request, 'movies/movie_form.html', {'form': form, 'action': 'Create'})
 
 
-@login_required
+@admin_required
 def movie_update_view(request, pk):
     """Update an existing movie (admin only)"""
-    if not request.user.is_admin_user:
-        messages.error(request, 'You do not have permission to access this page.')
-        return redirect('movies:movie_list')
-    
     movie = get_object_or_404(Movie, pk=pk)
     
     if request.method == 'POST':
@@ -89,13 +82,9 @@ def movie_update_view(request, pk):
     return render(request, 'movies/movie_form.html', {'form': form, 'action': 'Update', 'movie': movie})
 
 
-@login_required
+@admin_required
 def movie_delete_view(request, pk):
     """Delete a movie (admin only)"""
-    if not request.user.is_admin_user:
-        messages.error(request, 'You do not have permission to access this page.')
-        return redirect('movies:movie_list')
-    
     movie = get_object_or_404(Movie, pk=pk)
     
     if request.method == 'POST':
@@ -107,13 +96,9 @@ def movie_delete_view(request, pk):
     return render(request, 'movies/movie_confirm_delete.html', {'movie': movie})
 
 
-@login_required
+@admin_required
 def showtime_create_view(request):
     """Create a new showtime (admin only)"""
-    if not request.user.is_admin_user:
-        messages.error(request, 'You do not have permission to access this page.')
-        return redirect('movies:movie_list')
-    
     if request.method == 'POST':
         form = ShowtimeForm(request.POST)
         if form.is_valid():
