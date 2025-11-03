@@ -14,6 +14,8 @@ urlpatterns = [
     path('movies/', include('movies.urls')),
     path('bookings/', include('bookings.urls')),
     path('dashboard/', include('dashboard.urls')),
+    path('api/', include('movie_booking.api_urls')),
+    path('api-auth/', include('rest_framework.urls')),
 ]
 
 if settings.DEBUG:
