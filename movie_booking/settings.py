@@ -124,6 +124,7 @@ LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'movies:movie_list'
 LOGOUT_REDIRECT_URL = 'accounts:login'
 
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
@@ -147,3 +148,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+from decouple import config
+DEBUG = config('DEBUG', default=False, cast=bool)
+SECRET_KEY = config('nhsmos1689_SECRET_KEY', default='unsafe-secret-key')
