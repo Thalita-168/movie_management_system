@@ -8,11 +8,10 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <!-- Fixed URL namespaces to use proper app_name:url_name format -->
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <a href="{% url 'movies:movie_list' %}">Movie Booking</a>
+                <a href="{% url 'movies:movie_list' %}">STLFlix</a>
             </div>
             <ul class="nav-menu">
                 <li><a href="{% url 'movies:movie_list' %}">Movies</a></li>
@@ -34,14 +33,16 @@
                 
                 <form method="post" action="{% url 'accounts:login' %}" class="auth-form">
                     {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    
                     <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" name="username" class="form-input" required>
+                        <label for="id_username">Username</label>
+                        {{ form.username }}
                     </div>
                     
                     <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" class="form-input" required>
+                        <label for="id_password">Password</label>
+                        {{ form.password }}
                     </div>
                     
                     <button type="submit" class="btn btn-primary">Login</button>

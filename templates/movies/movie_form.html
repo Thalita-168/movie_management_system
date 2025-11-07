@@ -8,17 +8,19 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <nav class="navbar">
+<nav class="navbar">
         <div class="container">
-            <a href="{% url 'movies:movie_list' %}" class="logo">Movie Booking</a>
-            <ul class="nav-links">
+            <div class="nav-brand">
+                <a href="{% url 'movies:movie_list' %}">STLFlix</a>
+            </div>
+            <ul class="nav-menu">
                 <li><a href="{% url 'movies:movie_list' %}">Movies</a></li>
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'bookings:booking_list' %}">My Bookings</a></li>
+                    <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
                     {% if user.is_admin_user %}
                         <li><a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a></li>
                     {% endif %}
-                    <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
                     <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
                 {% else %}
                     <li><a href="{% url 'accounts:login' %}">Login</a></li>
@@ -40,10 +42,10 @@
 
             <div class="form-container">
                 <h1>{{ action }} Movie</h1>
-                
+
                 <form method="post" enctype="multipart/form-data" class="movie-form">
                     {% csrf_token %}
-                    
+
                     <div class="form-group">
                         <label for="{{ form.title.id_for_label }}">Title</label>
                         {{ form.title }}
@@ -51,7 +53,7 @@
                             <span class="error">{{ form.title.errors.0 }}</span>
                         {% endif %}
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="{{ form.description.id_for_label }}">Description</label>
                         {{ form.description }}
@@ -59,15 +61,15 @@
                             <span class="error">{{ form.description.errors.0 }}</span>
                         {% endif %}
                     </div>
-                    
+
                     <div class="form-group">
-                        <label>Genres</label>
+                        <label for="{{ form.genres.id_for_label }}">Genres</label>
                         {{ form.genres }}
                         {% if form.genres.errors %}
                             <span class="error">{{ form.genres.errors.0 }}</span>
                         {% endif %}
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="{{ form.director.id_for_label }}">Director</label>
@@ -76,7 +78,7 @@
                                 <span class="error">{{ form.director.errors.0 }}</span>
                             {% endif %}
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="{{ form.language.id_for_label }}">Language</label>
                             {{ form.language }}
@@ -85,7 +87,7 @@
                             {% endif %}
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="{{ form.cast.id_for_label }}">Cast (comma-separated)</label>
                         {{ form.cast }}
@@ -93,7 +95,7 @@
                             <span class="error">{{ form.cast.errors.0 }}</span>
                         {% endif %}
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="{{ form.duration.id_for_label }}">Duration (minutes)</label>
@@ -102,15 +104,15 @@
                                 <span class="error">{{ form.duration.errors.0 }}</span>
                             {% endif %}
                         </div>
-                        
+
                         <div class="form-group">
-                            <label for="{{ form.rating.id_for_label }}">Rating (0-10)</label>
+                            <label for="{{ form.rating.id_for_label }}">Rating (0–10)</label>
                             {{ form.rating }}
                             {% if form.rating.errors %}
                                 <span class="error">{{ form.rating.errors.0 }}</span>
                             {% endif %}
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="{{ form.release_date.id_for_label }}">Release Date</label>
                             {{ form.release_date }}
@@ -119,7 +121,7 @@
                             {% endif %}
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="{{ form.poster.id_for_label }}">Poster Image</label>
                         {{ form.poster }}
@@ -127,17 +129,23 @@
                             <span class="error">{{ form.poster.errors.0 }}</span>
                         {% endif %}
                     </div>
-                    
-                    <div class="form-group">
+
+                    <div class="form-group checkbox-group">
                         <label for="{{ form.is_active.id_for_label }}">
                             {{ form.is_active }} Active
                         </label>
                     </div>
-                    
+
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">{{ action }} Movie</button>
                         <a href="{% if movie %}{% url 'movies:movie_detail' movie.pk %}{% else %}{% url 'movies:movie_list' %}{% endif %}" class="btn btn-secondary">Cancel</a>
                     </div>
+
+                    {% if movie and user.is_authenticated and movie.is_active and movie.showtimes.exists %}
+                        <div class="form-actions">
+                            <a href="{% url 'bookings:booking_create' movie.showtimes.first.id %}" class="btn btn-success">Book Seat</a>
+                        </div>
+                    {% endif %}
                 </form>
             </div>
         </div>

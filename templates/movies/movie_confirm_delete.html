@@ -8,17 +8,19 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <nav class="navbar">
+   <nav class="navbar">
         <div class="container">
-            <a href="{% url 'movies:movie_list' %}" class="logo">Movie Booking</a>
-            <ul class="nav-links">
+            <div class="nav-brand">
+                <a href="{% url 'movies:movie_list' %}">STLFlix</a>
+            </div>
+            <ul class="nav-menu">
                 <li><a href="{% url 'movies:movie_list' %}">Movies</a></li>
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'bookings:booking_list' %}">My Bookings</a></li>
+                    <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
                     {% if user.is_admin_user %}
                         <li><a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a></li>
                     {% endif %}
-                    <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
                     <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
                 {% else %}
                     <li><a href="{% url 'accounts:login' %}">Login</a></li>

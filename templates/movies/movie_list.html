@@ -8,18 +8,16 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <!-- Fixed URL namespaces -->
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <a href="{% url 'movies:movie_list' %}">Movie Booking</a>
+                <a href="{% url 'movies:movie_list' %}">STLFlix</a>
             </div>
             <ul class="nav-menu">
                 <li><a href="{% url 'movies:movie_list' %}">Movies</a></li>
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'bookings:booking_list' %}">My Bookings</a></li>
                     <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
-                    <!-- Standardized to use user.is_admin_user -->
                     {% if user.is_admin_user %}
                         <li><a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a></li>
                     {% endif %}
@@ -36,12 +34,11 @@
         <div class="container">
             <div class="page-header">
                 <h1>Now Showing</h1>
-                <!-- Standardized to use user.is_admin_user -->
                 {% if user.is_admin_user %}
                     <a href="{% url 'movies:movie_create' %}" class="btn btn-primary">Add Movie</a>
                 {% endif %}
             </div>
-            
+
             <form method="get" action="{% url 'movies:movie_list' %}" class="search-form">
                 <div class="search-filters">
                     <div class="form-group">
@@ -51,7 +48,7 @@
                         <select name="genre" class="form-input">
                             <option value="">All Genres</option>
                             {% for genre in genres %}
-                                <option value="{{ genre.id }}" {% if request.GET.genre == genre.id|stringformat:"s" %}selected{% endif %}>{{ genre.name }}</option>
+                                <option value="{{ genre.id }}" {% if request.GET.genre|stringformat:"s" == genre.id|stringformat:"s" %}selected{% endif %}>{{ genre.name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -65,7 +62,7 @@
                     <button type="submit" class="btn btn-secondary">Search</button>
                 </div>
             </form>
-            
+
             <div class="movie-grid">
                 {% for movie in movies %}
                 <div class="movie-card">
@@ -73,7 +70,7 @@
                         {% if movie.poster %}
                             <img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
                         {% else %}
-                            <img src="/placeholder.svg?height=400&width=300" alt="{{ movie.title }}">
+                            <img src="{% static 'images/placeholder.svg' %}" alt="{{ movie.title }}">
                         {% endif %}
                     </div>
                     <div class="movie-info">
@@ -88,6 +85,10 @@
                             {% endfor %}
                         </p>
                         <a href="{% url 'movies:movie_detail' movie.id %}" class="btn btn-primary">View Details</a>
+
+                        {% if user.is_authenticated and movie.is_active and movie.showtimes.exists %}
+                            <a href="{% url 'bookings:booking_create' movie.showtimes.first.id %}" class="btn btn-success">Book Seat</a>
+                        {% endif %}
                     </div>
                 </div>
                 {% empty %}

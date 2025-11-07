@@ -8,17 +8,19 @@
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <nav class="navbar">
+<nav class="navbar">
         <div class="container">
-            <a href="{% url 'movies:movie_list' %}" class="logo">Movie Booking</a>
-            <ul class="nav-links">
+            <div class="nav-brand">
+                <a href="{% url 'movies:movie_list' %}">STLFlix</a>
+            </div>
+            <ul class="nav-menu">
                 <li><a href="{% url 'movies:movie_list' %}">Movies</a></li>
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'bookings:booking_list' %}">My Bookings</a></li>
+                    <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
                     {% if user.is_admin_user %}
                         <li><a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a></li>
                     {% endif %}
-                    <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
                     <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
                 {% else %}
                     <li><a href="{% url 'accounts:login' %}">Login</a></li>
@@ -40,10 +42,10 @@
 
             <div class="form-container">
                 <h1>Create Showtime</h1>
-                
+
                 <form method="post" class="showtime-form">
                     {% csrf_token %}
-                    
+
                     <div class="form-group">
                         <label for="{{ form.movie.id_for_label }}">Movie</label>
                         {{ form.movie }}
@@ -51,7 +53,7 @@
                             <span class="error">{{ form.movie.errors.0 }}</span>
                         {% endif %}
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="{{ form.show_date.id_for_label }}">Show Date</label>
@@ -60,7 +62,7 @@
                                 <span class="error">{{ form.show_date.errors.0 }}</span>
                             {% endif %}
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="{{ form.show_time.id_for_label }}">Show Time</label>
                             {{ form.show_time }}
@@ -69,7 +71,7 @@
                             {% endif %}
                         </div>
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="{{ form.price.id_for_label }}">Price ($)</label>
@@ -78,7 +80,7 @@
                                 <span class="error">{{ form.price.errors.0 }}</span>
                             {% endif %}
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="{{ form.total_seats.id_for_label }}">Total Seats</label>
                             {{ form.total_seats }}
@@ -86,7 +88,7 @@
                                 <span class="error">{{ form.total_seats.errors.0 }}</span>
                             {% endif %}
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="{{ form.screen_number.id_for_label }}">Screen Number</label>
                             {{ form.screen_number }}
@@ -95,7 +97,7 @@
                             {% endif %}
                         </div>
                     </div>
-                    
+
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Create Showtime</button>
                         <a href="{% url 'movies:movie_list' %}" class="btn btn-secondary">Cancel</a>

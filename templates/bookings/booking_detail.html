@@ -12,7 +12,7 @@
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <a href="{% url 'movies:movie_list' %}">Movie Booking</a>
+                <a href="{% url 'movies:movie_list' %}">STLFlix</a>
             </div>
             <ul class="nav-menu">
                 <li><a href="{% url 'movies:movie_list' %}">Movies</a></li>
@@ -22,7 +22,7 @@
                 {% if user.is_admin_user %}
                     <li><a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a></li>
                 {% endif %}
-                <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
+                <a href="{% url 'accounts:logout' %}">Logout</a>
             </ul>
         </div>
     </nav>
@@ -89,7 +89,7 @@
                 <div class="booking-actions">
                     <button onclick="window.print()" class="btn btn-secondary">Print Ticket</button>
                     {% if booking.status == 'confirmed' %}
-                        <a href="{% url 'bookings:booking_cancel' booking.booking_id %}" class="btn btn-danger">Cancel Booking</a>
+                        <a href="{% url 'bookings:booking_confirm_cancel' booking.booking_id %}" class="btn btn-danger">Cancel Booking</a>
                     {% endif %}
                     <a href="{% url 'bookings:booking_list' %}" class="btn btn-primary">Back to My Bookings</a>
                 </div>

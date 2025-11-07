@@ -5,24 +5,24 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    # Admin panel
+    # 🛠 Admin panel
     path('admin/', admin.site.urls),
 
-    # Default redirect to movies
+    # 🏠 Default redirect to movies homepage
     path('', RedirectView.as_view(url='/movies/', permanent=False)),
 
-    # Core app routes
-    path('accounts/', include('accounts.urls')),
-    path('movies/', include('movies.urls')),
-    path('bookings/', include('bookings.urls')),
-    path('dashboard/', include('dashboard.urls')),
+    # 🌐 Core app routes
+    path('accounts/', include('accounts.urls')),     # app_name = 'accounts'
+    path('movies/', include('movies.urls')),         # app_name = 'movies'
+    path('bookings/', include('bookings.urls')),     # app_name = 'bookings'
+    path('dashboard/', include('dashboard.urls')),   # app_name = 'dashboard'
 
-    # API routes (namespaced to avoid conflict)
-    path('api/bookings/', include('bookings.api_urls')),
-    path('api/movies/', include('movies.api_urls')),
+    # 🔌 API routes (namespaced)
+    path('api/bookings/', include('bookings.api_urls')),  # app_name = 'bookings'
+    path('api/movies/', include('movies.api_urls')),      # app_name = 'movies'
 ]
 
-# Static and media files in development
+# 🖼 Serve static and media files during development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

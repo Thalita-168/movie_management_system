@@ -15,14 +15,21 @@ def get_client_ip(request):
 
 
 def register_view(request):
-    """User registration view"""
+    """User registration view with role support"""
     if request.user.is_authenticated:
         return redirect('movies:movie_list')
 
     form = UserRegistrationForm(request.POST or None)
     if request.method == 'POST':
         if form.is_valid():
-            user = form.save()
+            user = form.save(commit=False)
+
+            # Capture role from POST if not handled by form
+            role = request.POST.get('role')
+            if role in ['admin', 'user']:
+                user.role = role
+
+            user.save()
             login(request, user)
 
             UserActivityLog.objects.create(
@@ -41,7 +48,7 @@ def register_view(request):
 
 
 def login_view(request):
-    """User login view"""
+    """User login view with ban check"""
     if request.user.is_authenticated:
         return redirect('movies:movie_list')
 
@@ -78,7 +85,7 @@ def login_view(request):
 
 @login_required
 def logout_view(request):
-    """User logout view"""
+    """User logout view with activity logging"""
     UserActivityLog.objects.create(
         user=request.user,
         activity_type='signout',
@@ -93,7 +100,7 @@ def logout_view(request):
 
 @login_required
 def profile_view(request):
-    """User profile view"""
+    """User profile view with update support"""
     form = UserProfileForm(request.POST or None, instance=request.user)
     if request.method == 'POST':
         if form.is_valid():

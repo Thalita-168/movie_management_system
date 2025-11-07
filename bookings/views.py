@@ -21,33 +21,29 @@ def booking_create_view(request, showtime_id):
         if form.is_valid():
             seats = form.cleaned_data['seats']
             
-            # Use transaction to ensure data consistency
             try:
                 with transaction.atomic():
-                    # Lock the showtime row to prevent race conditions
                     showtime = Showtime.objects.select_for_update().get(pk=showtime_id)
                     
                     if seats > showtime.available_seats:
                         messages.error(request, 'Not enough seats available.')
                         return redirect('bookings:booking_create', showtime_id=showtime_id)
                     
-                    # Create booking
                     booking = form.save(commit=False)
                     booking.user = request.user
                     booking.showtime = showtime
                     booking.total_price = showtime.price * seats
                     booking.status = 'confirmed'
-                    booking.payment_status = 'completed'  # Mock payment
+                    booking.payment_status = 'completed'
                     booking.save()
                     
-                    # Update available seats
                     showtime.available_seats -= seats
                     showtime.save()
                     
                     messages.success(request, 'Booking confirmed successfully!')
                     return redirect('bookings:booking_detail', booking_id=booking.booking_id)
             
-            except Exception as e:
+            except Exception:
                 messages.error(request, 'An error occurred while processing your booking.')
                 return redirect('bookings:booking_create', showtime_id=showtime_id)
     else:
@@ -55,7 +51,7 @@ def booking_create_view(request, showtime_id):
     
     context = {
         'form': form,
-        'showtime': showtime,
+        'showtime': showtime,  # Use this in your template as {{ showtime.price }}
     }
     return render(request, 'bookings/booking_form.html', context)
 
@@ -76,7 +72,6 @@ def booking_detail_view(request, booking_id):
     """Display booking details"""
     booking = get_object_or_404(Booking, booking_id=booking_id)
     
-    # Ensure user can only view their own bookings (unless admin)
     if booking.user != request.user and not request.user.is_admin_user:
         messages.error(request, 'You do not have permission to view this booking.')
         return redirect('bookings:booking_list')
@@ -99,12 +94,10 @@ def booking_cancel_view(request, booking_id):
     if request.method == 'POST':
         try:
             with transaction.atomic():
-                # Return seats to showtime
                 showtime = Showtime.objects.select_for_update().get(pk=booking.showtime.pk)
                 showtime.available_seats += booking.seats
                 showtime.save()
                 
-                # Update booking status
                 booking.status = 'cancelled'
                 booking.payment_status = 'refunded'
                 booking.save()
@@ -112,7 +105,7 @@ def booking_cancel_view(request, booking_id):
                 messages.success(request, 'Booking cancelled successfully. Refund will be processed.')
                 return redirect('bookings:booking_list')
         
-        except Exception as e:
+        except Exception:
             messages.error(request, 'An error occurred while cancelling your booking.')
             return redirect('bookings:booking_detail', booking_id=booking_id)
     

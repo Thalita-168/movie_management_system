@@ -3,14 +3,20 @@ from django.db import models
 
 
 class User(AbstractUser):
-    """Custom User model with additional fields"""
+    """Custom User model with flexible username and role support"""
     ROLE_CHOICES = (
         ('user', 'User'),
         ('admin', 'Admin'),
     )
 
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+        help_text="You can use any characters you want.",
+        error_messages={'unique': "This username is already taken."}
+    )
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='user')
-    phone = models.CharField(max_length=15, blank=True, null=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
     date_of_birth = models.DateField(blank=True, null=True)
     is_banned = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -25,7 +31,7 @@ class User(AbstractUser):
 
 
 class UserActivityLog(models.Model):
-    """Track user authentication activities"""
+    """Simple log for user authentication actions"""
     ACTIVITY_CHOICES = (
         ('signup', 'Sign Up'),
         ('signin', 'Sign In'),
@@ -44,11 +50,11 @@ class UserActivityLog(models.Model):
         verbose_name_plural = 'User Activity Logs'
 
     def __str__(self):
-        return f"{self.user.username} - {self.activity_type} at {self.timestamp}"
+        return f"{self.user.username} - {self.activity_type}"
 
 
 class MovieViewLog(models.Model):
-    """Track movie page views"""
+    """Track when users view movie pages"""
     movie = models.ForeignKey('movies.Movie', on_delete=models.CASCADE, related_name='view_logs')
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True, related_name='movie_views')
     viewed_at = models.DateTimeField(auto_now_add=True)
@@ -60,11 +66,11 @@ class MovieViewLog(models.Model):
         verbose_name_plural = 'Movie View Logs'
 
     def __str__(self):
-        return f"{self.movie.title} - viewed at {self.viewed_at}"
+        return f"{self.movie.title} viewed on {self.viewed_at.date()}"
 
 
 class DailyStatistics(models.Model):
-    """Daily aggregated statistics"""
+    """Daily summary of platform activity"""
     date = models.DateField(unique=True, auto_now_add=True)
     total_users = models.PositiveIntegerField(default=0)
     new_signups = models.PositiveIntegerField(default=0)
@@ -81,11 +87,11 @@ class DailyStatistics(models.Model):
         verbose_name_plural = 'Daily Statistics'
 
     def __str__(self):
-        return f"Statistics for {self.date}"
+        return f"Stats for {self.date}"
 
 
 class MovieStatistics(models.Model):
-    """Statistics for individual movies"""
+    """Stats for individual movies"""
     movie = models.OneToOneField('movies.Movie', on_delete=models.CASCADE, related_name='statistics')
     total_views = models.PositiveIntegerField(default=0)
     total_bookings = models.PositiveIntegerField(default=0)
@@ -98,16 +104,16 @@ class MovieStatistics(models.Model):
         verbose_name_plural = 'Movie Statistics'
 
     def __str__(self):
-        return f"Statistics - {self.movie.title}"
+        return f"{self.movie.title} stats"
 
 
 class BookingAnalytics(models.Model):
-    """Detailed booking analytics"""
+    """Extra data about how bookings happen"""
     booking = models.OneToOneField('bookings.Booking', on_delete=models.CASCADE, related_name='analytics')
-    conversion_time = models.DurationField(blank=True, null=True)  # Time from view to booking
-    device_type = models.CharField(max_length=50, blank=True)      # mobile, tablet, desktop
-    referral_source = models.CharField(max_length=100, blank=True) # direct, search, social
-    payment_method = models.CharField(max_length=50, blank=True)   # card, paypal, etc
+    conversion_time = models.DurationField(blank=True, null=True)
+    device_type = models.CharField(max_length=50, blank=True)
+    referral_source = models.CharField(max_length=100, blank=True)
+    payment_method = models.CharField(max_length=50, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -116,11 +122,11 @@ class BookingAnalytics(models.Model):
         verbose_name_plural = 'Booking Analytics'
 
     def __str__(self):
-        return f"Analytics - Booking {self.booking.booking_id}"
+        return f"Booking {self.booking.booking_id} analytics"
 
 
 class UserMetrics(models.Model):
-    """Track individual user metrics"""
+    """Track user-level engagement and value"""
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='metrics')
     total_bookings = models.PositiveIntegerField(default=0)
     total_spent = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -134,4 +140,4 @@ class UserMetrics(models.Model):
         verbose_name_plural = 'User Metrics'
 
     def __str__(self):
-        return f"Metrics - {self.user.username}"
+        return f"{self.user.username}'s metrics"

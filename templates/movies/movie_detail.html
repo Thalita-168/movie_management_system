@@ -5,139 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ movie.title }} - Movie Booking</title>
     {% load static %}
-    <link rel="stylesheet" href="/static/css/style.css">
-</head>
-<body>
-    <!-- Fixed URL namespaces -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="nav-brand">
-                <a href="/templates/movies/movie_list.html">Movie Booking</a>
-            </div>
-            <ul class="nav-menu">
-                <li><a href="/templates/movies/movie_list.html">Movies</a></li>
-                {% if user.is_authenticated %}
-                    <li><a href="/templates/bookings/booking_list.html">My Bookings</a></li>
-                    <li><a href="/templates/accounts/profile.html">Profile</a></li>
-                    <!-- Standardized to use user.is_admin_user -->
-                    {% if user.is_admin_user %}
-                        <li><a href="/templates/dashboard/dashboard_home.html">Dashboard</a></li>
-                    {% endif %}
-                    <li><a href="/templates/accounts/logout.html">Logout</a></li>
-                {% else %}
-                    <li><a href="/templates/accounts/login.html">Login</a></li>
-                    <li><a href="/templates/accounts/register.html">Register</a></li>
-                {% endif %}
-            </ul>
-        </div>
-    </nav>
-
-    <main class="main-content">
-        <div class="container">
-            <div class="movie-detail">
-                <div class="movie-detail-header">
-                    <div class="movie-detail-poster">
-                        {% if movie.poster %}
-                            <img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
-                        {% else %}
-                            <img src="/placeholder.svg?height=500&width=350" alt="{{ movie.title }}">
-                        {% endif %}
-                    </div>
-                    
-                    <div class="movie-detail-info">
-                        <h1>{{ movie.title }}</h1>
-                        
-                        <div class="movie-detail-meta">
-                            <span class="rating">⭐ {{ movie.rating }}/10</span>
-                            <span>{{ movie.duration }} minutes</span>
-                            <span>{{ movie.language }}</span>
-                            <span>{{ movie.release_date.year }}</span>
-                        </div>
-                        
-                        <div class="movie-genres">
-                            {% for genre in movie.genres.all %}
-                                <span class="genre-tag">{{ genre.name }}</span>
-                            {% endfor %}
-                        </div>
-                        
-                        <div class="movie-description">
-                            <h3>Synopsis</h3>
-                            <p>{{ movie.description }}</p>
-                        </div>
-                        
-                        <div class="movie-credits">
-                            <p><strong>Director:</strong> {{ movie.director }}</p>
-                            <p><strong>Cast:</strong> {{ movie.cast }}</p>
-                        </div>
-                        
-                        <!-- Standardized to use user.is_admin_user -->
-                        {% if user.is_admin_user %}
-                        <div class="admin-actions">
-                            <a href="/templates/movies/movie_update.html?id={{ movie.id }}" class="btn btn-secondary">Edit Movie</a>
-                            <a href="/templates/movies/movie_delete.html?id={{ movie.id }}" class="btn btn-danger">Delete Movie</a>
-                            <a href="/templates/movies/showtime_create.html?movie={{ movie.id }}" class="btn btn-success">Add Showtime</a>
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-                
-                <div class="showtimes-section">
-                    <h2>Available Showtimes</h2>
-                    
-                    <div class="showtimes-grid">
-                        {% for showtime in showtimes %}
-                        <div class="showtime-card">
-                            <div class="showtime-info">
-                                <p class="showtime-date">{{ showtime.show_date|date:"F d, Y" }}</p>
-                                <p class="showtime-time">{{ showtime.show_time|time:"g:i A" }}</p>
-                                <p class="showtime-screen">Screen {{ showtime.screen_number }}</p>
-                                <p class="showtime-price">${{ showtime.price }}</p>
-                                <p class="showtime-seats">{{ showtime.available_seats }} seats available</p>
-                            </div>
-                            {% if user.is_authenticated %}
-                                <a href="/templates/bookings/booking_create.html?showtime={{ showtime.id }}" class="btn btn-primary">Book Now</a>
-                            {% else %}
-                                <a href="/templates/accounts/login.html?next=/templates/bookings/booking_create.html?showtime={{ showtime.id }}" class="btn btn-primary">Login to Book</a>
-                            {% endif %}
-                        </div>
-                        {% empty %}
-                        <p class="no-results">No showtimes available for this movie.</p>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 Movie Booking System. All rights reserved.</p>
-        </div>
-    </footer>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ movie.title }} - Movie Booking</title>
-    {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <!-- Fixed URL namespaces -->
-    <nav class="navbar">
+<nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <a href="{% url 'movies:movie_list' %}">Movie Booking</a>
+                <a href="{% url 'movies:movie_list' %}">STLFlix</a>
             </div>
             <ul class="nav-menu">
                 <li><a href="{% url 'movies:movie_list' %}">Movies</a></li>
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'bookings:booking_list' %}">My Bookings</a></li>
                     <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
-                    <!-- Standardized to use user.is_admin_user -->
                     {% if user.is_admin_user %}
                         <li><a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a></li>
                     {% endif %}
@@ -158,7 +38,7 @@
                         {% if movie.poster %}
                             <img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
                         {% else %}
-                            <img src="/placeholder.svg?height=500&width=350" alt="{{ movie.title }}">
+                            <img src="{% static 'images/placeholder.svg' %}" alt="{{ movie.title }}">
                         {% endif %}
                     </div>
                     
@@ -187,8 +67,13 @@
                             <p><strong>Director:</strong> {{ movie.director }}</p>
                             <p><strong>Cast:</strong> {{ movie.cast }}</p>
                         </div>
-                        
-                        <!-- Standardized to use user.is_admin_user -->
+
+                        {% if user.is_authenticated and movie.is_active and movie.showtimes.exists %}
+                            <div class="book-now-global">
+                                <a href="{% url 'bookings:booking_create' movie.showtimes.first.id %}" class="btn btn-success">Book Seat</a>
+                            </div>
+                        {% endif %}
+
                         {% if user.is_admin_user %}
                         <div class="admin-actions">
                             <a href="{% url 'movies:movie_update' movie.id %}" class="btn btn-secondary">Edit Movie</a>

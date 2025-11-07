@@ -97,7 +97,10 @@ def movie_delete_view(request, pk):
         messages.success(request, f'Movie "{title}" deleted successfully!')
         return redirect('movies:movie_list')
 
-    return render(request, 'movies/movie_confirm_delete.html', {'movie': movie})
+    context = {
+        'movie': movie,
+    }
+    return render(request, 'movies/movie_confirm_delete.html', context)
 
 
 @admin_required
@@ -110,4 +113,7 @@ def showtime_create_view(request):
         messages.success(request, 'Showtime created successfully!')
         return redirect('movies:movie_detail', pk=showtime.movie.pk)
 
-    return render(request, 'movies/showtime_form.html', {'form': form})
+    context = {
+        'form': form,
+    }
+    return render(request, 'movies/showtime_form.html', context)

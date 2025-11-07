@@ -5,24 +5,26 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Serializer for User model"""
+    """Full serializer for User model (admin use or internal APIs)"""
     password = serializers.CharField(write_only=True, required=False)
-    
+
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 
-                  'phone_number', 'role', 'is_active', 'date_joined', 'password']
+        fields = [
+            'id', 'username', 'email', 'first_name', 'last_name',
+            'phone_number', 'role', 'is_active', 'date_joined', 'password'
+        ]
         read_only_fields = ['id', 'date_joined']
-    
+
     def create(self, validated_data):
         """Create user with encrypted password"""
         password = validated_data.pop('password', None)
-        user = User.objects.create(**validated_data)
+        user = User(**validated_data)
         if password:
             user.set_password(password)
-            user.save()
+        user.save()
         return user
-    
+
     def update(self, instance, validated_data):
         """Update user with encrypted password"""
         password = validated_data.pop('password', None)
@@ -35,9 +37,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    """Serializer for user profile (limited fields)"""
-    
+    """Limited serializer for user profile (safe for frontend use)"""
+
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'phone_number']
+        fields = [
+            'id', 'username', 'email', 'first_name', 'last_name', 'phone_number'
+        ]
         read_only_fields = ['id', 'username']

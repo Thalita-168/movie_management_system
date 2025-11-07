@@ -1,76 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Tickets - Movie Booking</title>
-    <link rel="stylesheet" href="/static/css/style.css">
-</head>
-<body>
-    <!-- Removed all Django template tags, converted to pure HTML with JavaScript -->
-    <nav class="navbar">
-        <div class="container">
-            <div class="nav-brand">
-                <a href="/movies/">Movie Booking</a>
-            </div>
-            <ul class="nav-menu">
-                <li><a href="/movies/">Movies</a></li>
-                <li><a href="/bookings/">My Bookings</a></li>
-                <li><a href="/accounts/profile/">Profile</a></li>
-                <li><a href="/accounts/logout/">Logout</a></li>
-            </ul>
-        </div>
-    </nav>
+{% extends 'base.html' %}
 
-    <main class="main-content">
-        <div class="container">
-            <div class="booking-container">
-                <h1>Book Tickets</h1>
-                
-                <div class="booking-summary">
-                    <h2>The Dark Knight</h2>
-                    <p><strong>Date:</strong> February 15, 2025</p>
-                    <p><strong>Time:</strong> 7:00 PM</p>
-                    <p><strong>Screen:</strong> 1</p>
-                    <p><strong>Price per seat:</strong> $15.00</p>
-                    <p><strong>Available seats:</strong> 45</p>
+{% block title %}Book Tickets - Movie Booking{% endblock %}
+
+{% block content %}
+<main class="main-content">
+    <div class="container">
+        <div class="booking-container">
+            <h1>Book Tickets</h1>
+
+            <div class="booking-summary">
+                <h2>{{ showtime.movie.title }}</h2>
+                <p><strong>Date:</strong> {{ showtime.show_date }}</p>
+                <p><strong>Time:</strong> {{ showtime.show_time }}</p>
+                <p><strong>Screen:</strong> {{ showtime.screen }}</p>
+                <p><strong>Price per seat:</strong> ${{ showtime.price }}</p>
+                <p><strong>Available seats:</strong> {{ showtime.available_seats }}</p>
+            </div>
+
+            <form method="post" action="{% url 'bookings:booking_create' showtime.id %}" class="booking-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="seats">Number of Seats</label>
+                    <input type="number" id="seats" name="seats" class="form-control" min="1" max="{{ showtime.available_seats }}" value="1" required>
                 </div>
-                
-                <form method="post" action="/bookings/create/1/" class="booking-form">
-                    <div class="form-group">
-                        <label for="seats">Number of Seats</label>
-                        <input type="number" id="seats" name="seats" class="form-control" min="1" max="10" value="1" required>
-                    </div>
-                    
-                    <div class="booking-total">
-                        <p>Total: $<span id="total-price">15.00</span></p>
-                    </div>
-                    
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Confirm Booking</button>
-                        <a href="/movies/1/" class="btn btn-secondary">Cancel</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </main>
 
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 Movie Booking System. All rights reserved.</p>
-        </div>
-    </footer>
+                <div class="booking-total">
+                    <p>Total: $<span id="total-price">{{ showtime.price }}</span></p>
+                </div>
 
-    <script>
-        const pricePerSeat = 15.00;
+                {% if messages %}
+                    <div class="messages">
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Confirm Booking</button>
+                    <a href="{% url 'movies:movie_detail' showtime.movie.id %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const pricePerSeat = parseFloat("{{ showtime.price }}");
         const seatsInput = document.getElementById('seats');
         const totalPriceSpan = document.getElementById('total-price');
-        
-        seatsInput.addEventListener('input', function() {
-            const seats = parseInt(this.value) || 0;
+
+        function updateTotal() {
+            const seats = parseInt(seatsInput.value) || 0;
             const total = (seats * pricePerSeat).toFixed(2);
             totalPriceSpan.textContent = total;
-        });
-    </script>
-</body>
-</html>
+        }
+
+        seatsInput.addEventListener('input', updateTotal);
+        updateTotal(); // Initial update
+    });
+</script>
+{% endblock %}
