@@ -13,4 +13,8 @@ urlpatterns = [
 
     # Booking management
     path('bookings/', views.manage_bookings_view, name='manage_bookings'),
+
+    # Optional: Add more dashboard features here later
+    # path('movies/', views.manage_movies_view, name='manage_movies'),
+    # path('reports/', views.reports_view, name='reports'),
 ]
