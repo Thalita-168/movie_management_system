@@ -15,4 +15,7 @@ urlpatterns = [
 
     # ❌ Cancel a specific booking
     path('<uuid:booking_id>/cancel/', views.booking_cancel_view, name='booking_cancel'),
+
+    # ✅ Confirm cancellation (fixes NoReverseMatch error)
+    path('<uuid:booking_id>/confirm-cancel/', views.booking_confirm_cancel_view, name='booking_confirm_cancel'),
 ]
