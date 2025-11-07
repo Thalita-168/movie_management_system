@@ -4,19 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Movie Booking</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <!-- Removed all Django template tags, converted to pure HTML -->
+    <!-- Fixed URL namespaces to use proper app_name:url_name format -->
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <a href="/movies/">Movie Booking</a>
+                <a href="{% url 'movies:movie_list' %}">Movie Booking</a>
             </div>
             <ul class="nav-menu">
-                <li><a href="/movies/">Movies</a></li>
-                <li><a href="/accounts/login/">Login</a></li>
-                <li><a href="/accounts/register/">Register</a></li>
+                <li><a href="{% url 'movies:movie_list' %}">Movies</a></li>
+                <li><a href="{% url 'accounts:login' %}">Login</a></li>
+                <li><a href="{% url 'accounts:register' %}">Register</a></li>
             </ul>
         </div>
     </nav>
@@ -25,22 +26,29 @@
         <div class="auth-container">
             <div class="auth-card">
                 <h1>Login</h1>
-                <form method="post" action="/accounts/login/" class="auth-form">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+                
+                <form method="post" action="{% url 'accounts:login' %}" class="auth-form">
+                    {% csrf_token %}
                     <div class="form-group">
                         <label for="username">Username</label>
-                        <input type="text" id="username" name="username" class="form-control" required>
+                        <input type="text" id="username" name="username" class="form-input" required>
                     </div>
                     
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" class="form-control" required>
+                        <input type="password" id="password" name="password" class="form-input" required>
                     </div>
                     
                     <button type="submit" class="btn btn-primary">Login</button>
                 </form>
                 
                 <p class="auth-link">
-                    Don't have an account? <a href="/accounts/register/">Register here</a>
+                    Don't have an account? <a href="{% url 'accounts:register' %}">Register here</a>
                 </p>
             </div>
         </div>

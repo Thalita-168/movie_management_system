@@ -1,110 +1,152 @@
-{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ action }} Movie - Movie Booking</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="{% url 'movies:movie_list' %}" class="logo">Movie Booking</a>
+            <ul class="nav-links">
+                <li><a href="{% url 'movies:movie_list' %}">Movies</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'bookings:booking_list' %}">My Bookings</a></li>
+                    {% if user.is_admin_user %}
+                        <li><a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
+                    <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'accounts:login' %}">Login</a></li>
+                    <li><a href="{% url 'accounts:register' %}">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
 
-{% block title %}{{ action }} Movie - Movie Booking{% endblock %}
+    <main>
+        <div class="container">
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
 
-{% block content %}
-<div class="container">
-    <div class="form-container">
-        <h1>{{ action }} Movie</h1>
-        
-        <form method="post" enctype="multipart/form-data" class="movie-form">
-            {% csrf_token %}
-            
-            <div class="form-group">
-                <label for="{{ form.title.id_for_label }}">Title</label>
-                {{ form.title }}
-                {% if form.title.errors %}
-                    <span class="error">{{ form.title.errors.0 }}</span>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                <label for="{{ form.description.id_for_label }}">Description</label>
-                {{ form.description }}
-                {% if form.description.errors %}
-                    <span class="error">{{ form.description.errors.0 }}</span>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                <label>Genres</label>
-                {{ form.genres }}
-                {% if form.genres.errors %}
-                    <span class="error">{{ form.genres.errors.0 }}</span>
-                {% endif %}
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="{{ form.director.id_for_label }}">Director</label>
-                    {{ form.director }}
-                    {% if form.director.errors %}
-                        <span class="error">{{ form.director.errors.0 }}</span>
-                    {% endif %}
-                </div>
+            <div class="form-container">
+                <h1>{{ action }} Movie</h1>
                 
-                <div class="form-group">
-                    <label for="{{ form.language.id_for_label }}">Language</label>
-                    {{ form.language }}
-                    {% if form.language.errors %}
-                        <span class="error">{{ form.language.errors.0 }}</span>
-                    {% endif %}
-                </div>
+                <form method="post" enctype="multipart/form-data" class="movie-form">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="{{ form.title.id_for_label }}">Title</label>
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <span class="error">{{ form.title.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.description.id_for_label }}">Description</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <span class="error">{{ form.description.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Genres</label>
+                        {{ form.genres }}
+                        {% if form.genres.errors %}
+                            <span class="error">{{ form.genres.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="{{ form.director.id_for_label }}">Director</label>
+                            {{ form.director }}
+                            {% if form.director.errors %}
+                                <span class="error">{{ form.director.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.language.id_for_label }}">Language</label>
+                            {{ form.language }}
+                            {% if form.language.errors %}
+                                <span class="error">{{ form.language.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.cast.id_for_label }}">Cast (comma-separated)</label>
+                        {{ form.cast }}
+                        {% if form.cast.errors %}
+                            <span class="error">{{ form.cast.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="{{ form.duration.id_for_label }}">Duration (minutes)</label>
+                            {{ form.duration }}
+                            {% if form.duration.errors %}
+                                <span class="error">{{ form.duration.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.rating.id_for_label }}">Rating (0-10)</label>
+                            {{ form.rating }}
+                            {% if form.rating.errors %}
+                                <span class="error">{{ form.rating.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.release_date.id_for_label }}">Release Date</label>
+                            {{ form.release_date }}
+                            {% if form.release_date.errors %}
+                                <span class="error">{{ form.release_date.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.poster.id_for_label }}">Poster Image</label>
+                        {{ form.poster }}
+                        {% if form.poster.errors %}
+                            <span class="error">{{ form.poster.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="{{ form.is_active.id_for_label }}">
+                            {{ form.is_active }} Active
+                        </label>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">{{ action }} Movie</button>
+                        <a href="{% if movie %}{% url 'movies:movie_detail' movie.pk %}{% else %}{% url 'movies:movie_list' %}{% endif %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
             </div>
-            
-            <div class="form-group">
-                <label for="{{ form.cast.id_for_label }}">Cast (comma-separated)</label>
-                {{ form.cast }}
-                {% if form.cast.errors %}
-                    <span class="error">{{ form.cast.errors.0 }}</span>
-                {% endif %}
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="{{ form.duration.id_for_label }}">Duration (minutes)</label>
-                    {{ form.duration }}
-                    {% if form.duration.errors %}
-                        <span class="error">{{ form.duration.errors.0 }}</span>
-                    {% endif %}
-                </div>
-                
-                <div class="form-group">
-                    <label for="{{ form.rating.id_for_label }}">Rating (0-10)</label>
-                    {{ form.rating }}
-                    {% if form.rating.errors %}
-                        <span class="error">{{ form.rating.errors.0 }}</span>
-                    {% endif %}
-                </div>
-                
-                <div class="form-group">
-                    <label for="{{ form.release_date.id_for_label }}">Release Date</label>
-                    {{ form.release_date }}
-                    {% if form.release_date.errors %}
-                        <span class="error">{{ form.release_date.errors.0 }}</span>
-                    {% endif %}
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="{{ form.poster.id_for_label }}">Poster Image</label>
-                {{ form.poster }}
-                {% if form.poster.errors %}
-                    <span class="error">{{ form.poster.errors.0 }}</span>
-                {% endif %}
-            </div>
-            
-            <div class="form-group">
-                <label for="{{ form.is_active.id_for_label }}">
-                    {{ form.is_active }} Active
-                </label>
-            </div>
-            
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">{{ action }} Movie</button>
-                <a href="{% if movie %}{% url 'movies:movie_detail' movie.pk %}{% else %}{% url 'movies:movie_list' %}{% endif %}" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
-    </div>
-</div>
-{% endblock %}
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Movie Booking System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

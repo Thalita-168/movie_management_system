@@ -4,22 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Movie Booking</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <!-- Removed all Django template tags, converted to pure HTML with sample data -->
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <a href="/movies/">Movie Booking</a>
+                <a href="{% url 'movies:movie_list' %}">Movie Booking</a>
             </div>
             <ul class="nav-menu">
-                <li><a href="/movies/">Movies</a></li>
-                <li><a href="/bookings/">My Bookings</a></li>
-                <li><a href="/dashboard/">Dashboard</a></li>
-                <li><a href="/movies/create/">Add Movie</a></li>
-                <li><a href="/accounts/profile/">Profile</a></li>
-                <li><a href="/accounts/logout/">Logout</a></li>
+                <li><a href="{% url 'movies:movie_list' %}">Movies</a></li>
+                <li><a href="{% url 'bookings:booking_list' %}">My Bookings</a></li>
+                <li><a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a></li>
+                <li><a href="{% url 'movies:movie_create' %}">Add Movie</a></li>
+                <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
+                <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
             </ul>
         </div>
     </nav>
@@ -32,19 +32,87 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <h3>Total Movies</h3>
-                        <p class="stat-value">24</p>
+                        <p class="stat-value">{{ total_movies }}</p>
                     </div>
                     <div class="stat-card">
                         <h3>Total Users</h3>
-                        <p class="stat-value">156</p>
+                        <p class="stat-value">{{ total_users }}</p>
                     </div>
                     <div class="stat-card">
                         <h3>Total Bookings</h3>
-                        <p class="stat-value">342</p>
+                        <p class="stat-value">{{ total_bookings }}</p>
                     </div>
                     <div class="stat-card">
                         <h3>Total Revenue</h3>
-                        <p class="stat-value">$5,130.00</p>
+                        <p class="stat-value">${{ total_revenue|floatformat:2 }}</p>
+                    </div>
+                </div>
+                
+                <!-- Added user activity statistics section -->
+                <div class="dashboard-section">
+                    <h2>User Activity Statistics</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>Total Sign Ups</h3>
+                            <p class="stat-value">{{ total_signups }}</p>
+                            <p class="stat-label">All time</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Total Sign Ins</h3>
+                            <p class="stat-value">{{ total_signins }}</p>
+                            <p class="stat-label">All time</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Recent Sign Ups</h3>
+                            <p class="stat-value">{{ recent_signups }}</p>
+                            <p class="stat-label">Last 7 days</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Recent Sign Ins</h3>
+                            <p class="stat-value">{{ recent_signins }}</p>
+                            <p class="stat-label">Last 7 days</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Today's Sign Ups</h3>
+                            <p class="stat-value">{{ today_signups }}</p>
+                            <p class="stat-label">Last 24 hours</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Today's Sign Ins</h3>
+                            <p class="stat-value">{{ today_signins }}</p>
+                            <p class="stat-label">Last 24 hours</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Added recent activity logs section -->
+                <div class="dashboard-section">
+                    <h2>Recent User Activity</h2>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Activity</th>
+                                    <th>IP Address</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for activity in recent_activities %}
+                                <tr>
+                                    <td>{{ activity.user.username }}</td>
+                                    <td><span class="status-badge status-{{ activity.activity_type }}">{{ activity.get_activity_type_display }}</span></td>
+                                    <td>{{ activity.ip_address|default:"N/A" }}</td>
+                                    <td>{{ activity.timestamp|date:"M d, Y H:i" }}</td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="4" class="no-results">No activity logs yet</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 
@@ -59,22 +127,16 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for movie in popular_movies %}
                                 <tr>
-                                    <td>The Dark Knight</td>
-                                    <td>45</td>
+                                    <td><a href="{% url 'movies:movie_detail' movie.id %}">{{ movie.title }}</a></td>
+                                    <td>{{ movie.booking_count }}</td>
                                 </tr>
+                                {% empty %}
                                 <tr>
-                                    <td>Inception</td>
-                                    <td>38</td>
+                                    <td colspan="2" class="no-results">No data available</td>
                                 </tr>
-                                <tr>
-                                    <td>The Shawshank Redemption</td>
-                                    <td>32</td>
-                                </tr>
-                                <tr>
-                                    <td>Pulp Fiction</td>
-                                    <td>28</td>
-                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -91,22 +153,16 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for item in revenue_by_movie %}
                                 <tr>
-                                    <td>The Dark Knight</td>
-                                    <td>$675.00</td>
+                                    <td>{{ item.showtime__movie__title }}</td>
+                                    <td>${{ item.revenue|floatformat:2 }}</td>
                                 </tr>
+                                {% empty %}
                                 <tr>
-                                    <td>Inception</td>
-                                    <td>$570.00</td>
+                                    <td colspan="2" class="no-results">No data available</td>
                                 </tr>
-                                <tr>
-                                    <td>The Shawshank Redemption</td>
-                                    <td>$480.00</td>
-                                </tr>
-                                <tr>
-                                    <td>Pulp Fiction</td>
-                                    <td>$420.00</td>
-                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -128,43 +184,31 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                {% for booking in recent_bookings %}
                                 <tr>
-                                    <td>BK-12345678...</td>
-                                    <td>john_doe</td>
-                                    <td>The Dark Knight</td>
-                                    <td>Feb 10, 2025</td>
-                                    <td>2</td>
-                                    <td>$30.00</td>
-                                    <td><span class="status-badge status-confirmed">Confirmed</span></td>
+                                    <td>{{ booking.booking_id|truncatechars:15 }}</td>
+                                    <td>{{ booking.user.username }}</td>
+                                    <td><a href="{% url 'movies:movie_detail' booking.showtime.movie.id %}">{{ booking.showtime.movie.title }}</a></td>
+                                    <td>{{ booking.created_at|date:"M d, Y" }}</td>
+                                    <td>{{ booking.seats }}</td>
+                                    <td>${{ booking.total_price }}</td>
+                                    <td><span class="status-badge status-{{ booking.status }}">{{ booking.get_status_display }}</span></td>
                                 </tr>
+                                {% empty %}
                                 <tr>
-                                    <td>BK-87654321...</td>
-                                    <td>jane_smith</td>
-                                    <td>Inception</td>
-                                    <td>Feb 12, 2025</td>
-                                    <td>3</td>
-                                    <td>$45.00</td>
-                                    <td><span class="status-badge status-confirmed">Confirmed</span></td>
+                                    <td colspan="7" class="no-results">No bookings yet</td>
                                 </tr>
-                                <tr>
-                                    <td>BK-11223344...</td>
-                                    <td>bob_wilson</td>
-                                    <td>Pulp Fiction</td>
-                                    <td>Feb 13, 2025</td>
-                                    <td>1</td>
-                                    <td>$15.00</td>
-                                    <td><span class="status-badge status-pending">Pending</span></td>
-                                </tr>
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
                 </div>
                 
                 <div class="dashboard-actions">
-                    <a href="/dashboard/users/" class="btn btn-primary">Manage Users</a>
-                    <a href="/dashboard/bookings/" class="btn btn-primary">Manage Bookings</a>
-                    <a href="/movies/create/" class="btn btn-primary">Add Movie</a>
-                    <a href="/showtimes/create/" class="btn btn-primary">Add Showtime</a>
+                    <a href="{% url 'dashboard:manage_users' %}" class="btn btn-primary">Manage Users</a>
+                    <a href="{% url 'dashboard:manage_bookings' %}" class="btn btn-primary">Manage Bookings</a>
+                    <a href="{% url 'movies:movie_create' %}" class="btn btn-primary">Add Movie</a>
+                    <a href="{% url 'movies:showtime_create' %}" class="btn btn-primary">Add Showtime</a>
                 </div>
             </div>
         </div>

@@ -3,21 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Dark Knight - Movie Booking</title>
+    <title>{{ movie.title }} - Movie Booking</title>
+    {% load static %}
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-    <!-- Removed all Django template tags, converted to pure HTML with sample data -->
+    <!-- Fixed URL namespaces -->
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <a href="/movies/">Movie Booking</a>
+                <a href="/templates/movies/movie_list.html">Movie Booking</a>
             </div>
             <ul class="nav-menu">
-                <li><a href="/movies/">Movies</a></li>
-                <li><a href="/bookings/">My Bookings</a></li>
-                <li><a href="/accounts/profile/">Profile</a></li>
-                <li><a href="/accounts/logout/">Logout</a></li>
+                <li><a href="/templates/movies/movie_list.html">Movies</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="/templates/bookings/booking_list.html">My Bookings</a></li>
+                    <li><a href="/templates/accounts/profile.html">Profile</a></li>
+                    <!-- Standardized to use user.is_admin_user -->
+                    {% if user.is_admin_user %}
+                        <li><a href="/templates/dashboard/dashboard_home.html">Dashboard</a></li>
+                    {% endif %}
+                    <li><a href="/templates/accounts/logout.html">Logout</a></li>
+                {% else %}
+                    <li><a href="/templates/accounts/login.html">Login</a></li>
+                    <li><a href="/templates/accounts/register.html">Register</a></li>
+                {% endif %}
             </ul>
         </div>
     </nav>
@@ -27,34 +37,47 @@
             <div class="movie-detail">
                 <div class="movie-detail-header">
                     <div class="movie-detail-poster">
-                        <img src="/placeholder.svg?height=500&width=350" alt="The Dark Knight">
+                        {% if movie.poster %}
+                            <img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
+                        {% else %}
+                            <img src="/placeholder.svg?height=500&width=350" alt="{{ movie.title }}">
+                        {% endif %}
                     </div>
                     
                     <div class="movie-detail-info">
-                        <h1>The Dark Knight</h1>
+                        <h1>{{ movie.title }}</h1>
                         
                         <div class="movie-detail-meta">
-                            <span class="rating">⭐ 9.0/10</span>
-                            <span>152 minutes</span>
-                            <span>English</span>
-                            <span>2008</span>
+                            <span class="rating">⭐ {{ movie.rating }}/10</span>
+                            <span>{{ movie.duration }} minutes</span>
+                            <span>{{ movie.language }}</span>
+                            <span>{{ movie.release_date.year }}</span>
                         </div>
                         
                         <div class="movie-genres">
-                            <span class="genre-tag">Action</span>
-                            <span class="genre-tag">Crime</span>
-                            <span class="genre-tag">Drama</span>
+                            {% for genre in movie.genres.all %}
+                                <span class="genre-tag">{{ genre.name }}</span>
+                            {% endfor %}
                         </div>
                         
                         <div class="movie-description">
                             <h3>Synopsis</h3>
-                            <p>When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.</p>
+                            <p>{{ movie.description }}</p>
                         </div>
                         
                         <div class="movie-credits">
-                            <p><strong>Director:</strong> Christopher Nolan</p>
-                            <p><strong>Cast:</strong> Christian Bale, Heath Ledger, Aaron Eckhart, Michael Caine</p>
+                            <p><strong>Director:</strong> {{ movie.director }}</p>
+                            <p><strong>Cast:</strong> {{ movie.cast }}</p>
                         </div>
+                        
+                        <!-- Standardized to use user.is_admin_user -->
+                        {% if user.is_admin_user %}
+                        <div class="admin-actions">
+                            <a href="/templates/movies/movie_update.html?id={{ movie.id }}" class="btn btn-secondary">Edit Movie</a>
+                            <a href="/templates/movies/movie_delete.html?id={{ movie.id }}" class="btn btn-danger">Delete Movie</a>
+                            <a href="/templates/movies/showtime_create.html?movie={{ movie.id }}" class="btn btn-success">Add Showtime</a>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
                 
@@ -62,53 +85,142 @@
                     <h2>Available Showtimes</h2>
                     
                     <div class="showtimes-grid">
-                        <!-- Sample Showtime 1 -->
+                        {% for showtime in showtimes %}
                         <div class="showtime-card">
                             <div class="showtime-info">
-                                <p class="showtime-date">February 15, 2025</p>
-                                <p class="showtime-time">2:00 PM</p>
-                                <p class="showtime-screen">Screen 1</p>
-                                <p class="showtime-price">$12.00</p>
-                                <p class="showtime-seats">45 seats available</p>
+                                <p class="showtime-date">{{ showtime.show_date|date:"F d, Y" }}</p>
+                                <p class="showtime-time">{{ showtime.show_time|time:"g:i A" }}</p>
+                                <p class="showtime-screen">Screen {{ showtime.screen_number }}</p>
+                                <p class="showtime-price">${{ showtime.price }}</p>
+                                <p class="showtime-seats">{{ showtime.available_seats }} seats available</p>
                             </div>
-                            <a href="/bookings/create/1/" class="btn btn-primary">Book Now</a>
+                            {% if user.is_authenticated %}
+                                <a href="/templates/bookings/booking_create.html?showtime={{ showtime.id }}" class="btn btn-primary">Book Now</a>
+                            {% else %}
+                                <a href="/templates/accounts/login.html?next=/templates/bookings/booking_create.html?showtime={{ showtime.id }}" class="btn btn-primary">Login to Book</a>
+                            {% endif %}
                         </div>
+                        {% empty %}
+                        <p class="no-results">No showtimes available for this movie.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
 
-                        <!-- Sample Showtime 2 -->
-                        <div class="showtime-card">
-                            <div class="showtime-info">
-                                <p class="showtime-date">February 15, 2025</p>
-                                <p class="showtime-time">5:30 PM</p>
-                                <p class="showtime-screen">Screen 2</p>
-                                <p class="showtime-price">$15.00</p>
-                                <p class="showtime-seats">38 seats available</p>
-                            </div>
-                            <a href="/bookings/create/2/" class="btn btn-primary">Book Now</a>
-                        </div>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Movie Booking System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ movie.title }} - Movie Booking</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <!-- Fixed URL namespaces -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <a href="{% url 'movies:movie_list' %}">Movie Booking</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{% url 'movies:movie_list' %}">Movies</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'bookings:booking_list' %}">My Bookings</a></li>
+                    <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
+                    <!-- Standardized to use user.is_admin_user -->
+                    {% if user.is_admin_user %}
+                        <li><a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'accounts:login' %}">Login</a></li>
+                    <li><a href="{% url 'accounts:register' %}">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
 
-                        <!-- Sample Showtime 3 -->
+    <main class="main-content">
+        <div class="container">
+            <div class="movie-detail">
+                <div class="movie-detail-header">
+                    <div class="movie-detail-poster">
+                        {% if movie.poster %}
+                            <img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
+                        {% else %}
+                            <img src="/placeholder.svg?height=500&width=350" alt="{{ movie.title }}">
+                        {% endif %}
+                    </div>
+                    
+                    <div class="movie-detail-info">
+                        <h1>{{ movie.title }}</h1>
+                        
+                        <div class="movie-detail-meta">
+                            <span class="rating">⭐ {{ movie.rating }}/10</span>
+                            <span>{{ movie.duration }} minutes</span>
+                            <span>{{ movie.language }}</span>
+                            <span>{{ movie.release_date.year }}</span>
+                        </div>
+                        
+                        <div class="movie-genres">
+                            {% for genre in movie.genres.all %}
+                                <span class="genre-tag">{{ genre.name }}</span>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="movie-description">
+                            <h3>Synopsis</h3>
+                            <p>{{ movie.description }}</p>
+                        </div>
+                        
+                        <div class="movie-credits">
+                            <p><strong>Director:</strong> {{ movie.director }}</p>
+                            <p><strong>Cast:</strong> {{ movie.cast }}</p>
+                        </div>
+                        
+                        <!-- Standardized to use user.is_admin_user -->
+                        {% if user.is_admin_user %}
+                        <div class="admin-actions">
+                            <a href="{% url 'movies:movie_update' movie.id %}" class="btn btn-secondary">Edit Movie</a>
+                            <a href="{% url 'movies:movie_delete' movie.id %}" class="btn btn-danger">Delete Movie</a>
+                            <a href="{% url 'movies:showtime_create' %}?movie={{ movie.id }}" class="btn btn-success">Add Showtime</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="showtimes-section">
+                    <h2>Available Showtimes</h2>
+                    
+                    <div class="showtimes-grid">
+                        {% for showtime in showtimes %}
                         <div class="showtime-card">
                             <div class="showtime-info">
-                                <p class="showtime-date">February 15, 2025</p>
-                                <p class="showtime-time">9:00 PM</p>
-                                <p class="showtime-screen">Screen 1</p>
-                                <p class="showtime-price">$15.00</p>
-                                <p class="showtime-seats">52 seats available</p>
+                                <p class="showtime-date">{{ showtime.show_date|date:"F d, Y" }}</p>
+                                <p class="showtime-time">{{ showtime.show_time|time:"g:i A" }}</p>
+                                <p class="showtime-screen">Screen {{ showtime.screen_number }}</p>
+                                <p class="showtime-price">${{ showtime.price }}</p>
+                                <p class="showtime-seats">{{ showtime.available_seats }} seats available</p>
                             </div>
-                            <a href="/bookings/create/3/" class="btn btn-primary">Book Now</a>
+                            {% if user.is_authenticated %}
+                                <a href="{% url 'bookings:booking_create' showtime.id %}" class="btn btn-primary">Book Now</a>
+                            {% else %}
+                                <a href="{% url 'accounts:login' %}?next={% url 'bookings:booking_create' showtime.id %}" class="btn btn-primary">Login to Book</a>
+                            {% endif %}
                         </div>
-
-                        <!-- Sample Showtime 4 -->
-                        <div class="showtime-card">
-                            <div class="showtime-info">
-                                <p class="showtime-date">February 16, 2025</p>
-                                <p class="showtime-time">1:00 PM</p>
-                                <p class="showtime-screen">Screen 3</p>
-                                <p class="showtime-price">$12.00</p>
-                                <p class="showtime-seats">60 seats available</p>
-                            </div>
-                            <a href="/bookings/create/4/" class="btn btn-primary">Book Now</a>
-                        </div>
+                        {% empty %}
+                        <p class="no-results">No showtimes available for this movie.</p>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

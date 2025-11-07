@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db.models import Sum, Count, Q
+from datetime import timedelta
+from django.utils import timezone
 from accounts.decorators import admin_required
-from accounts.models import User
+from accounts.models import User, UserActivityLog
 from movies.models import Movie, Showtime
 from bookings.models import Booking
 
@@ -18,6 +20,34 @@ def dashboard_home_view(request):
         status='confirmed',
         payment_status='completed'
     ).aggregate(total=Sum('total_price'))['total'] or 0
+    
+    total_signups = UserActivityLog.objects.filter(activity_type='signup').count()
+    total_signins = UserActivityLog.objects.filter(activity_type='signin').count()
+    
+    # Activity in the last 7 days
+    seven_days_ago = timezone.now() - timedelta(days=7)
+    recent_signups = UserActivityLog.objects.filter(
+        activity_type='signup',
+        timestamp__gte=seven_days_ago
+    ).count()
+    recent_signins = UserActivityLog.objects.filter(
+        activity_type='signin',
+        timestamp__gte=seven_days_ago
+    ).count()
+    
+    # Activity in the last 24 hours
+    one_day_ago = timezone.now() - timedelta(days=1)
+    today_signups = UserActivityLog.objects.filter(
+        activity_type='signup',
+        timestamp__gte=one_day_ago
+    ).count()
+    today_signins = UserActivityLog.objects.filter(
+        activity_type='signin',
+        timestamp__gte=one_day_ago
+    ).count()
+    
+    # Recent activity logs
+    recent_activities = UserActivityLog.objects.select_related('user').order_by('-timestamp')[:10]
     
     # Recent bookings
     recent_bookings = Booking.objects.select_related(
@@ -42,6 +72,13 @@ def dashboard_home_view(request):
         'total_users': total_users,
         'total_bookings': total_bookings,
         'total_revenue': total_revenue,
+        'total_signups': total_signups,
+        'total_signins': total_signins,
+        'recent_signups': recent_signups,
+        'recent_signins': recent_signins,
+        'today_signups': today_signups,
+        'today_signins': today_signins,
+        'recent_activities': recent_activities,
         'recent_bookings': recent_bookings,
         'popular_movies': popular_movies,
         'revenue_by_movie': revenue_by_movie,

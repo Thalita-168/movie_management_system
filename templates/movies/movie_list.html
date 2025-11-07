@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movies - Movie Booking</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <!-- Converted to standalone HTML without template inheritance -->
+    <!-- Fixed URL namespaces -->
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
@@ -17,11 +18,11 @@
                 <li><a href="{% url 'movies:movie_list' %}">Movies</a></li>
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'bookings:booking_list' %}">My Bookings</a></li>
+                    <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
+                    <!-- Standardized to use user.is_admin_user -->
                     {% if user.is_admin_user %}
                         <li><a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a></li>
-                        <li><a href="{% url 'movies:movie_create' %}">Add Movie</a></li>
                     {% endif %}
-                    <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
                     <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
                 {% else %}
                     <li><a href="{% url 'accounts:login' %}">Login</a></li>
@@ -35,18 +36,31 @@
         <div class="container">
             <div class="page-header">
                 <h1>Now Showing</h1>
+                <!-- Standardized to use user.is_admin_user -->
+                {% if user.is_admin_user %}
+                    <a href="{% url 'movies:movie_create' %}" class="btn btn-primary">Add Movie</a>
+                {% endif %}
             </div>
             
-            <form method="get" class="search-form">
+            <form method="get" action="{% url 'movies:movie_list' %}" class="search-form">
                 <div class="search-filters">
                     <div class="form-group">
-                        {{ form.search }}
+                        <input type="text" name="search" placeholder="Search movies..." class="form-input" value="{{ request.GET.search }}">
                     </div>
                     <div class="form-group">
-                        {{ form.genre }}
+                        <select name="genre" class="form-input">
+                            <option value="">All Genres</option>
+                            {% for genre in genres %}
+                                <option value="{{ genre.id }}" {% if request.GET.genre == genre.id|stringformat:"s" %}selected{% endif %}>{{ genre.name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                     <div class="form-group">
-                        {{ form.sort_by }}
+                        <select name="sort_by" class="form-input">
+                            <option value="title" {% if request.GET.sort_by == 'title' %}selected{% endif %}>Title</option>
+                            <option value="rating" {% if request.GET.sort_by == 'rating' %}selected{% endif %}>Rating</option>
+                            <option value="release_date" {% if request.GET.sort_by == 'release_date' %}selected{% endif %}>Release Date</option>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-secondary">Search</button>
                 </div>
@@ -54,30 +68,30 @@
             
             <div class="movie-grid">
                 {% for movie in movies %}
-                    <div class="movie-card">
-                        <div class="movie-poster">
-                            {% if movie.poster %}
-                                <img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
-                            {% else %}
-                                <img src="/placeholder.svg?height=400&width=300" alt="{{ movie.title }}">
-                            {% endif %}
-                        </div>
-                        <div class="movie-info">
-                            <h3>{{ movie.title }}</h3>
-                            <div class="movie-meta">
-                                <span class="rating">⭐ {{ movie.rating }}/10</span>
-                                <span class="duration">{{ movie.duration }} min</span>
-                            </div>
-                            <p class="movie-genres">
-                                {% for genre in movie.genres.all %}
-                                    <span class="genre-tag">{{ genre.name }}</span>
-                                {% endfor %}
-                            </p>
-                            <a href="{% url 'movies:movie_detail' movie.pk %}" class="btn btn-primary">View Details</a>
-                        </div>
+                <div class="movie-card">
+                    <div class="movie-poster">
+                        {% if movie.poster %}
+                            <img src="{{ movie.poster.url }}" alt="{{ movie.title }}">
+                        {% else %}
+                            <img src="/placeholder.svg?height=400&width=300" alt="{{ movie.title }}">
+                        {% endif %}
                     </div>
+                    <div class="movie-info">
+                        <h3>{{ movie.title }}</h3>
+                        <div class="movie-meta">
+                            <span class="rating">⭐ {{ movie.rating }}/10</span>
+                            <span class="duration">{{ movie.duration }} min</span>
+                        </div>
+                        <p class="movie-genres">
+                            {% for genre in movie.genres.all %}
+                                <span class="genre-tag">{{ genre.name }}</span>
+                            {% endfor %}
+                        </p>
+                        <a href="{% url 'movies:movie_detail' movie.id %}" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
                 {% empty %}
-                    <p class="no-results">No movies found.</p>
+                <p class="no-results">No movies found.</p>
                 {% endfor %}
             </div>
         </div>

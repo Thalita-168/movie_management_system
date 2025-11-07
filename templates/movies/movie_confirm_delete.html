@@ -1,21 +1,63 @@
-{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Movie - Movie Booking</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="{% url 'movies:movie_list' %}" class="logo">Movie Booking</a>
+            <ul class="nav-links">
+                <li><a href="{% url 'movies:movie_list' %}">Movies</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'bookings:booking_list' %}">My Bookings</a></li>
+                    {% if user.is_admin_user %}
+                        <li><a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
+                    <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'accounts:login' %}">Login</a></li>
+                    <li><a href="{% url 'accounts:register' %}">Register</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
 
-{% block title %}Delete Movie - Movie Booking{% endblock %}
+    <main>
+        <div class="container">
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
 
-{% block content %}
-<div class="container">
-    <div class="confirm-delete">
-        <h1>Confirm Delete</h1>
-        <p>Are you sure you want to delete the movie "{{ movie.title }}"?</p>
-        <p class="warning">This action cannot be undone. All associated showtimes and bookings will also be deleted.</p>
-        
-        <form method="post">
-            {% csrf_token %}
-            <div class="form-actions">
-                <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                <a href="{% url 'movies:movie_detail' movie.pk %}" class="btn btn-secondary">Cancel</a>
+            <div class="confirm-delete">
+                <h1>Confirm Delete</h1>
+                <p>Are you sure you want to delete the movie "{{ movie.title }}"?</p>
+                <p class="warning">This action cannot be undone. All associated showtimes and bookings will also be deleted.</p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                        <a href="{% url 'movies:movie_detail' movie.pk %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
             </div>
-        </form>
-    </div>
-</div>
-{% endblock %}
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Movie Booking System. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

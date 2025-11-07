@@ -4,20 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Bookings - Movie Booking</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <!-- Removed all Django template tags, converted to pure HTML with sample bookings -->
+    <!-- Fixed URL namespaces -->
     <nav class="navbar">
         <div class="container">
             <div class="nav-brand">
-                <a href="/movies/">Movie Booking</a>
+                <a href="{% url 'movies:movie_list' %}">Movie Booking</a>
             </div>
             <ul class="nav-menu">
-                <li><a href="/movies/">Movies</a></li>
-                <li><a href="/bookings/">My Bookings</a></li>
-                <li><a href="/accounts/profile/">Profile</a></li>
-                <li><a href="/accounts/logout/">Logout</a></li>
+                <li><a href="{% url 'movies:movie_list' %}">Movies</a></li>
+                <li><a href="{% url 'bookings:booking_list' %}">My Bookings</a></li>
+                <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
+                <!-- Standardized to use user.is_admin_user -->
+                {% if user.is_admin_user %}
+                    <li><a href="{% url 'dashboard:dashboard_home' %}">Dashboard</a></li>
+                {% endif %}
+                <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
             </ul>
         </div>
     </nav>
@@ -28,54 +33,41 @@
                 <h1>My Bookings</h1>
             </div>
             
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="message message-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            
             <div class="bookings-list">
-                <!-- Sample Booking 1 -->
+                {% for booking in bookings %}
                 <div class="booking-card">
                     <div class="booking-header">
-                        <h3>The Dark Knight</h3>
-                        <span class="booking-status status-confirmed">Confirmed</span>
+                        <h3>{{ booking.showtime.movie.title }}</h3>
+                        <span class="booking-status status-{{ booking.status }}">{{ booking.get_status_display }}</span>
                     </div>
                     
                     <div class="booking-details">
-                        <p><strong>Booking ID:</strong> BK-12345678-ABCD</p>
-                        <p><strong>Date:</strong> February 15, 2025</p>
-                        <p><strong>Time:</strong> 7:00 PM</p>
-                        <p><strong>Screen:</strong> 1</p>
-                        <p><strong>Seats:</strong> 2</p>
-                        <p><strong>Total Price:</strong> $30.00</p>
-                        <p><strong>Payment Status:</strong> Paid</p>
-                        <p><strong>Booked on:</strong> February 10, 2025 3:45 PM</p>
+                        <p><strong>Booking ID:</strong> {{ booking.booking_id }}</p>
+                        <p><strong>Date:</strong> {{ booking.showtime.show_date|date:"F d, Y" }}</p>
+                        <p><strong>Time:</strong> {{ booking.showtime.show_time|time:"g:i A" }}</p>
+                        <p><strong>Screen:</strong> {{ booking.showtime.screen_number }}</p>
+                        <p><strong>Seats:</strong> {{ booking.seats }}</p>
+                        <p><strong>Total Price:</strong> ${{ booking.total_price }}</p>
+                        <p><strong>Payment Status:</strong> {{ booking.get_payment_status_display }}</p>
+                        <p><strong>Booked on:</strong> {{ booking.created_at|date:"F d, Y g:i A" }}</p>
                     </div>
                     
                     <div class="booking-actions">
-                        <a href="/bookings/BK-12345678-ABCD/" class="btn btn-secondary">View Details</a>
-                        <a href="/bookings/BK-12345678-ABCD/cancel/" class="btn btn-danger">Cancel Booking</a>
+                        <a href="{% url 'bookings:booking_detail' booking.booking_id %}" class="btn btn-secondary">View Details</a>
+                        {% if booking.status == 'confirmed' %}
+                            <a href="{% url 'bookings:booking_cancel' booking.booking_id %}" class="btn btn-danger">Cancel Booking</a>
+                        {% endif %}
                     </div>
                 </div>
-
-                <!-- Sample Booking 2 -->
-                <div class="booking-card">
-                    <div class="booking-header">
-                        <h3>Inception</h3>
-                        <span class="booking-status status-confirmed">Confirmed</span>
-                    </div>
-                    
-                    <div class="booking-details">
-                        <p><strong>Booking ID:</strong> BK-87654321-WXYZ</p>
-                        <p><strong>Date:</strong> February 18, 2025</p>
-                        <p><strong>Time:</strong> 5:30 PM</p>
-                        <p><strong>Screen:</strong> 2</p>
-                        <p><strong>Seats:</strong> 3</p>
-                        <p><strong>Total Price:</strong> $45.00</p>
-                        <p><strong>Payment Status:</strong> Paid</p>
-                        <p><strong>Booked on:</strong> February 12, 2025 10:20 AM</p>
-                    </div>
-                    
-                    <div class="booking-actions">
-                        <a href="/bookings/BK-87654321-WXYZ/" class="btn btn-secondary">View Details</a>
-                        <a href="/bookings/BK-87654321-WXYZ/cancel/" class="btn btn-danger">Cancel Booking</a>
-                    </div>
-                </div>
+                {% empty %}
+                <p class="no-results">You have no bookings yet. <a href="{% url 'movies:movie_list' %}">Browse movies</a> to book tickets.</p>
+                {% endfor %}
             </div>
         </div>
     </main>

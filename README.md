@@ -1,4 +1,4 @@
-# 🎬 Django Movie Booking System
+# 🎬 Django Movie Management System
 
 A complete, production-ready movie booking system built with Django backend and HTML/CSS frontend. Features include user authentication, movie management, ticket booking, and an admin dashboard with analytics.
 
