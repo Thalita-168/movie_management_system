@@ -621,7 +621,7 @@ user.save()
 #### Port Already in Use
 \`\`\`bash
 # Use different port
-python manage.py runserver 8080
+python manage.py runserver 
 \`\`\`
 
 #### Static Files Not Loading
@@ -654,16 +654,6 @@ Contributions are welcome! Please follow these steps:
 ## 📄 License
 
 This project is open source and available under the MIT License.
-
----
-
-## 📞 Support
-
-For issues, questions, or contributions:
-
-- **Issues**: Create an issue in the repository
-- **Documentation**: Check `API_DOCUMENTATION.md` and `ROLES_DOCUMENTATION.md`
-- **Email**: support@moviebooking.com (if applicable)
 
 ---
 
