@@ -5,8 +5,6 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 import uuid
 
-
-
 class Booking(models.Model):
     """Booking model for ticket reservations."""
 
@@ -48,6 +46,7 @@ class Booking(models.Model):
     )
     booking_date = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)  # ✅ Added this line
 
     class Meta:
         ordering = ['-booking_date']
